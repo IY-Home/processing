@@ -110,7 +110,7 @@ A modular, object-oriented 2D game framework built in Processing. This project p
 ## **Technical Highlights**
 
 ### **Object-Oriented Design**
-- Clean inheritance hierarchy (`Thing` â specific objects)
+- Clean inheritance hierarchy (`Thing` -> specific objects)
 - Interface-based interactions (`Interactable`, `keyEvents`)
 - Encapsulated game state management with GameManager
 - Composition over inheritance where appropriate
