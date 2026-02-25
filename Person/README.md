@@ -1,5 +1,3 @@
-/**
-
 # 'Person' - Processing Game Framework
 
 ## **Overview**
@@ -183,9 +181,6 @@ A modular, object-oriented 2D game framework built in Processing. This project p
 - **Loading**: Smooth animated loading with real progress from ImageManager
 
 ---
-**/
-
-/**
 
 ## GETTING STARTED ##
 
@@ -476,4 +471,4 @@ Need a specific example?
 - Background updates: See `GameHuman` or `Door`
 - Asynchronous loading: See `ImageManager` and `LoadingManager`
 
-**/
+
