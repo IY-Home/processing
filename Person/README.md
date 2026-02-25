@@ -211,12 +211,14 @@ You may also put any code that needs to execute at program startup here:
 Returns: GameManager - Any class that extends GameManager
 
 Example:
+```java
     GameManager createGameManager() {
         GameManager gm = new GameManagerWithLoading("My Game", "2.0");
         gm.startupMessage = "Welcome to my game!";
         gm.imageManager = new 
         return gm;
     }
+```
 
 -----------------------------------------------------------------------------
 **Boolean initLoadingScreen(LoadingManager loader)**
@@ -240,6 +242,7 @@ Parameters:
 Returns: boolean - true to enable loading screen, false to disable
 
 Example:
+```java
     Boolean initLoadingScreen(LoadingManager loader) {
         String[] tips = {
             "Press DOWN to grab objects",
@@ -250,7 +253,7 @@ Example:
         loader.progressBarColor = color(255, 200, 100);
         return true;
     }
-
+```
 -----------------------------------------------------------------------------
 **void createScenes(Window window)**
 -----------------------------------------------------------------------------
@@ -289,6 +292,7 @@ Parameters:
     window - Window instance to configure
 
 Example:
+```java
     void createScenes(Window window) {
         window.addScenes(
             new Object[]{color(90,210,255), "beach.png", color(18,19,65)},
@@ -305,6 +309,7 @@ Example:
         window.cursorColor = color(0, 120, 255);
         window.scenes.setLoop(true);
     }
+```
 
 -----------------------------------------------------------------------------
 **void createHumans(ArrayList<Human> humans)**
@@ -325,6 +330,7 @@ Parameters:
     humans - ArrayList to add Human objects to
 
 Example:
+```java
     void createHumans(ArrayList<Human> humans) {
         GameHuman player = new GameHuman(
             "Isaac", "Tan", "boy", 10,
@@ -336,6 +342,7 @@ Example:
         ImageHuman npc = new ImageHuman("Joe", "person.png", width * 0.3, 0);
         humans.add(npc);
     }
+```
 
 -----------------------------------------------------------------------------
 **void createObjects(ArrayList<Thing> things)**
@@ -350,6 +357,7 @@ Parameters:
     things - ArrayList to add Thing objects to
 
 Example:
+```java
     void createObjects(ArrayList<Thing> things) {
         color wood = color(200,100,0);
         
@@ -359,6 +367,7 @@ Example:
         things.add(new CashBag(color(50,200,50), 400, 0, 50, "1234", "Hint"));
         things.add(new Lunchbox("Pizza", color(255,100,50), 300, 0, 15, 25));
     }
+```
 
 -----------------------------------------------------------------------------
 **void loop()**
@@ -372,12 +381,14 @@ Put any code here that needs to run continuously during the game:
 - Debug output
 
 Example:
+```java
     void loop() {
         if (frameCount % 300 == 0) {  // Every 5 seconds
             println("Time passes...");
         }
         myObject.customUpdate();
     }
+```
 
 -----------------------------------------------------------------------------
 **Notes on ImageManager Integration**
@@ -394,7 +405,7 @@ You don't need to interact with ImageManager directly unless creating custom ima
 ### **Creating Custom Object Classes**
 
 Create your own .pde file and extend existing classes:
-
+```java
    class MyNewObject extends Thing implements Interactable, keyEvents {
        // Properties
        int myIntegerProperty;
@@ -439,7 +450,7 @@ Create your own .pde file and extend existing classes:
        void keyUp(char key, int keyCode) { // Executes when a key is released. }
        
    }
-
+```
 
 ### **Using ImageManager**
 
