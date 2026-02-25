@@ -40,6 +40,7 @@ class BouncyBall extends Ball implements Interactable {
       gameManager.imageManager.addImage(imagePath, imagePath, round(this.radius*2), round(this.radius*2));
       this.checkTouchRadius = 150; // check objects 70 px from self
       this.checkTouchY = true;
+      this.groundHeightOffset = this.radius * 0.6;
     }
     void display() {
       push();

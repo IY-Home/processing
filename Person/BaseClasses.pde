@@ -74,15 +74,17 @@ abstract class Thing {
         
         // Get dynamic ground height at current X position
         float groundY = height * gameManager.window.getGroundHeightAt(position.x);
-        position.y = constrain(position.y, height * gameManager.window.physics.CEILING_HEIGHT, groundY - groundHeightOffset);
-    
+        float effectiveGroundY = groundY - groundHeightOffset;
+        
+        position.y = constrain(position.y, height * gameManager.window.physics.CEILING_HEIGHT, effectiveGroundY);
+
         // Handle ground collision with bounce
-        if (position.y >= groundY && abs(velocity.y) > 0.1) {
+        if (position.y >= effectiveGroundY && abs(velocity.y) > 0.1) {
             velocity.y *= -elasticity;
-        } else if (position.y >= groundY) {
+        } else if (position.y >= effectiveGroundY) {
             velocity.y = 0;
         }
-    
+
         // Apply friction
         if (friction < 1 && abs(velocity.x) > 0.2) {
             velocity.x *= friction;
