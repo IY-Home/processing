@@ -390,18 +390,6 @@ Example:
     }
 ```
 
------------------------------------------------------------------------------
-**Notes on ImageManager Integration**
------------------------------------------------------------------------------
-
-The ImageManager works automatically in the background:
-- Objects queue images via addImage() in their constructors
-- Images load asynchronously during the loading screen
-- getImage() returns the loaded PGraphics or a placeholder if not ready
-- Progress is tracked and displayed on the loading screen
-
-You don't need to interact with ImageManager directly unless creating custom image-based objects.
-
 ### **Creating Custom Object Classes**
 
 Create your own .pde file and extend existing classes:
@@ -452,6 +440,9 @@ Create your own .pde file and extend existing classes:
    }
 ```
 
+-----------------------------------------------------------------------------
+**Notes on ImageManager Integration**
+-----------------------------------------------------------------------------
 ### **Using ImageManager**
 
 The ImageManager handles all image loading automatically:
@@ -464,6 +455,16 @@ The ImageManager handles all image loading automatically:
 
 Images are loaded once and shared across all instances using the same path.
 
+The ImageManager works automatically in the background:
+- Objects queue images via addImage() in their constructors
+- Images load asynchronously during the loading screen
+- getImage() returns the loaded PGraphics or a placeholder if not ready
+- Progress is tracked and displayed on the loading screen
+
+You don't need to interact with ImageManager directly unless creating custom image-based objects.
+To add an image to ImageManager, the default is to load the image in the constructor of the object class (see the example `BouncyBall` class) by executing ```gameManager.imageManager.addImage("Unique_ID_for_Image_Usually_Same_As_Filename", "filename.png", width, height)```, and to get the image in `PGraphics` form by calling ```gameManager.imageManager.getImage("Unique_ID_for_Image")```. If you need to load images at game time, they aren't automatically loaded after an `addImage()` call. You have to call `gameManager.imageManager.startLoading()` to load all new images.
+
+**Note: do not call `startLoading()` after every `addImage`! Instead, add all images to the ImageManager queue first, then call `startLoading()` to load all of them at once.**
 
 ## **EXAMPLES PROVIDED**
 
