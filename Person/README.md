@@ -195,7 +195,7 @@ A modular, object-oriented 2D game framework built in Processing. This project p
 -----------------------------------------------------------------------------
 Creates and returns the main GameManager instance. Called at the very start of the program to define the global gameManager instance.
 
-You return a GameManager object here (default is 'return new GameManager("myName", "myVersion")'). This is useful if you extend GameManager to create your own custom manager (e.g. GameManagerWithLoading).
+You return a GameManager object here (default is ```java return new GameManager("myName", "myVersion")```). This is useful if you extend GameManager to create your own custom manager (e.g. GameManagerWithLoading).
 
 You can configure the GameManager before returning it:
 - Change the program name and version
@@ -225,7 +225,7 @@ Example:
 -----------------------------------------------------------------------------
 Configures the optional loading/splash screen (for if you used the provided GameManagerWithLoading). Called during GameManager initialization.
 
-To disable the splash screen entirely, just return false.
+To disable the splash screen entirely, just ```java return false```.
 
 You can customize the loading screen by modifying loader properties:
 - loadingMessages: String[] of messages to display during each loading stage
@@ -275,7 +275,7 @@ You can freely mix solid colors and images. For images:
 - Use just the filename (e.g., "beach.png")
 - ImageManager automatically loads them in the background
 
-You can also change the ground height across the scene like a terrain. Use window.addGroundKeyframe(int scene, float xPosition, float height).
+You can also change the ground height across the scene like a terrain. Use ```java window.addGroundKeyframe(int scene, float xPosition, float height)```.
 - int scene sets which scene to add the keyframe.
 - float xPosition sets the x position of the keyframe (vertex).
 - float height sets the height of that vertex, in a normalized value between 0 and 1, multipled by the screen height (height).
@@ -319,8 +319,8 @@ Creates all player characters and NPCs (if you have them) in the game.
 You create Human objects and add them to the ArrayList passed in. This ArrayList becomes the mainHumans list in the GameManager that the game updates (live()).
 
 Base Human constructor:
-    Human(String name, color hairColor, color shirtColor, color pantColor, 
-          color shoeColor, float posX, int sceneIn)
+    ```java Human(String name, color hairColor, color shirtColor, color pantColor, 
+          color shoeColor, float posX, int sceneIn)```
 
 Extended humans available (examples):
 - GameHuman: Adds hunger/money systems and background updates
