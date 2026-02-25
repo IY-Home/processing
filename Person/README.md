@@ -36,7 +36,7 @@ A modular, object-oriented 2D game framework built in Processing. This project p
 - Creates GameManager instance via user-defined `createGameManager()`
 - Sets window title and starts the game
 
-### **KeyHandler.pde**
+### **KeyHandlers.pde**
 - Key input handling and event system
 - `KeyManager` class tracks key states
 
