@@ -467,13 +467,13 @@ Images are loaded once and shared across all instances using the same path.
 4. **LoadingManager.pde** - Custom GameManager extension with loading screen
 
 Need a specific example?
-- Simple physics object â See `Ball` class
-- Image-based object â See `BouncyBall` or `ImageHuman`
-- Interactive furniture â See `Chair` class  
-- Scene transition â See `Door` class
-- Password input â See `CashBag` class
-- Storage system â See `PreFilledCupboard` class
-- Background updates â See `GameHuman` class
-- Asynchronous loading â See `ImageManager` and `LoadingManager`
+- Simple physics object: See `Ball` class
+- Image-based object: See `BouncyBall` or `ImageHuman`
+- Interactive furniture: See `Chair` class  
+- Scene transition: See `Door` class
+- Password input: See `CashBag` class
+- Storage system: See `PreFilledCupboard` class
+- Background updates: See `GameHuman` or `Door`
+- Asynchronous loading: See `ImageManager` and `LoadingManager`
 
 **/
