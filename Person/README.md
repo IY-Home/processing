@@ -140,11 +140,6 @@ A modular, object-oriented 2D game framework built in Processing. This project p
 - Automatic image conversion to PGraphics
 - Centralized resource caching to prevent duplicate loads
 
-## **Getting Started**
-1. **Requirements**: Processing IDE (https://processing.org/)
-2. **Setup**: Open any `.pde` file in Processing
-3. **Run**: Click the play button to start the game
-
 ### **Customization**
 - Add new scenes by extending color/image array
 - Create new object types by extending `Thing`
@@ -186,10 +181,9 @@ A modular, object-oriented 2D game framework built in Processing. This project p
 
 - To start building your game with this framework, you only need to edit GameInit.pde and create your own files to contain your classes.
 
-1. Import all files into Processing, either by cloning this repository or downloading the individual files: `BaseClasses.pde` (base classes), `GameHuman.pde` (Human extensions), `ObjectClasses.pde` (sample object classes), `GameManager.pde` (core systems), `KeyHandlers.pde` (input), `LoadingManager.pde` (optional loading screen), `Main.pde` (main setup/draw), and `GameInit.pde` (your game configuration).
+1. Import all files into Processing (download their IDE on `processing.org`), either by cloning this repository or downloading the individual files: `BaseClasses.pde` (base classes), `GameHuman.pde` (Human extensions), `ObjectClasses.pde` (sample object classes), `GameManager.pde` (core systems), `KeyHandlers.pde` (input), `LoadingManager.pde` (optional loading screen), `Main.pde` (main setup/draw), and `GameInit.pde` (your game configuration).
 2. You can edit, rename, or remove the example GameInit.pde and ObjectClasses.pde files. (You are recommended to use them as templates.)
-
-**3. In your `GameInit.pde`,** implement the following functions:
+3. In your **`GameInit.pde`,** implement the following functions:
 
 -----------------------------------------------------------------------------
 **GameManager createGameManager()**
