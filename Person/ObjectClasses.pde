@@ -268,6 +268,7 @@ class Door extends Thing implements Interactable {
     private float posXNew;
     
     boolean isOneWay;
+    boolean sittingOnGround;
 
     Door(boolean show, float posX, float posXDes, color frameColor, int sceneIn, int sceneDes) {
         this.show = show;
@@ -289,6 +290,7 @@ class Door extends Thing implements Interactable {
         this.checkTouchRadius = 80;
         this.checkTouchY = true;
         this.isOneWay = false;
+        this.sittingOnGround = true;
         this.frameColor = frameColor;
         this.hasPhysics = false; // Door is static
         this.updateInBackground = true;
@@ -357,8 +359,11 @@ class Door extends Thing implements Interactable {
                 // Set correct position based on which scene we're in
                 if (gameManager.window.scene == sceneFrom) {
                     this.position.x = posXFrom;
+                    if (this.sittingOnGround) this.position.y = height*gameManager.window.getGroundHeightAt(this.position.x);
+
                 } else {
                     this.position.x = posXDes;
+                    if (this.sittingOnGround) this.position.y = height*gameManager.window.getGroundHeightAt(this.position.x);
                 }
                 
                 this.show = true;

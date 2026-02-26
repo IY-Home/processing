@@ -55,7 +55,7 @@ A modular, object-oriented 2D game framework built in Processing. This project p
 - **`Thing`** - Abstract base class for all game objects
 - **`Human`** - Basic human with drawing and movement logic
 - **`Interactable`** - Interface for interactive objects
-- **`keyEvents`** - Interface for objects that respond to keyboard input
+- **`KeyEvents`** - Interface for objects that respond to keyboard input
 - **`InputBox`** - Text input UI with password support and callbacks
 
 ### **LoadingManager.pde**
@@ -111,7 +111,7 @@ A modular, object-oriented 2D game framework built in Processing. This project p
 
 ### **Object-Oriented Design**
 - Clean inheritance hierarchy (`Thing` -> specific objects)
-- Interface-based interactions (`Interactable`, `keyEvents`)
+- Interface-based interactions (`Interactable`, `KeyEvents`)
 - Encapsulated game state management with GameManager
 - Composition over inheritance where appropriate
 
@@ -385,11 +385,15 @@ Example:
     }
 ```
 
-### **Creating Custom Object Classes**
+-----------------------------------------------------------------------------
+That's the end of youe GameInit.pde. But what if you want to extend your game by making your own objects?
+
+**Creating Custom Object Classes**
+-----------------------------------------------------------------------------
 
 Create your own .pde file and extend existing classes:
 ```java
-   class MyNewObject extends Thing implements Interactable, keyEvents {
+   class MyNewObject extends Thing implements Interactable, KeyEvents {
        // Properties
        int myIntegerProperty;
        String myStringProperty;
@@ -428,7 +432,7 @@ Create your own .pde file and extend existing classes:
        If you implement Interactable and therefore use this function, then the base grabbable boolean flag will be ignored. }
        void onRelease() { // Executes when human releases this object. }
        
-       // keyEvents interface methods (optional, if you implemented keyEvents)
+       // KeyEvents interface methods (optional, if you implemented KeyEvents)
        void keyDown(char key, int keyCode) { // Executes when a key is pressed. }
        void keyUp(char key, int keyCode) { // Executes when a key is released. }
        

@@ -6,7 +6,7 @@ interface Interactable {
     void onInteract(Human human);      // Called when SHIFT is pressed when object held
 }
 
-interface keyEvents {
+interface KeyEvents {
     void keyDown(char key, int keyCode);
     void keyUp(char key, int keyCode);
 }
@@ -413,7 +413,7 @@ class Human extends Thing {
 // ====== UI ELEMENTS ======
 
 // InputBox Class for text input
-class InputBox implements keyEvents {
+class InputBox implements KeyEvents {
     float x, y, boxWidth, boxHeight;
     String title;
     String hint;
