@@ -408,7 +408,7 @@ Create your own .pde file and extend existing classes:
            this.checkTouchRadius = 70; // OPTIONAL: if you implement onTouch. At most 199. Leave checkTouchRadius to 0 if you do not need checkTouch.
            this.checkTouchY = false; // OPTIONAL: if you implement onTouch. If true, checks the full PVector.dist of this object and the other (including x and y), and if false, only checks x positions. Leave checkTouchY to false if you do not need checkTouch.
            this.drawInBackground = false; // OPTIONAL: change from false (default) to true if you want your object to be drawn behind other objects. For objects in background.
-           this.updateInBackground = true; // OPTIONAL: if you want it to update in background. If true, then define a function called backgroundUpdate() which will execute even if not in scene. 
+           this.updateInBackground = true; // OPTIONAL: if you want it to update in background. If true, then define a function called backgroundUpdate() which will execute when object is not in scene. 
            
            this.myStringProperty = "You can get it from the constructor parameters, or set it to a default value.";
        }

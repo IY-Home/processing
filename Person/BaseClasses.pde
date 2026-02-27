@@ -11,7 +11,7 @@ interface KeyEvents {
     void keyUp(char key, int keyCode);
 }
 
-// Base class for all game objects - NOW ABSTRACT
+// Base class for all game objects
 abstract class Thing {
     PVector position, velocity, acceleration; // Physics properties
     boolean held, grabbable, rested, occupied, show;
@@ -112,7 +112,8 @@ abstract class Thing {
         }
     }
     
-    void backgroundUpdate() {}    // Executes this if updateInBackground is true
+    // Executes this if updateInBackground is true and object not in current scene
+    void backgroundUpdate() {}
     
     // Check if object is in current scene
     boolean inScene() {
