@@ -185,7 +185,7 @@ A modular, object-oriented 2D game framework built in Processing. This project p
 2. You can edit, rename, or remove the example GameInit.pde and ObjectClasses.pde files. (You are recommended to use them as templates.)
 3. In your **`GameInit.pde`,** implement the following functions:
 
-**```GameManager createGameManager()```**
+### **```GameManager createGameManager()```**
 -----------------------------------------------------------------------------
 Creates and returns the main GameManager instance. Called at the very start of the program to define the global gameManager instance.
 
@@ -214,7 +214,7 @@ Example:
     }
 ```
 
-**```Boolean initLoadingScreen(LoadingManager loader)```**
+### **```Boolean initLoadingScreen(LoadingManager loader)```**
 -----------------------------------------------------------------------------
 Configures the optional loading/splash screen (for if you used the provided GameManagerWithLoading). Called during GameManager initialization.
 
@@ -248,7 +248,7 @@ Example:
     }
 ```
 
-**```void createScenes(Window window)```**
+### **```void createScenes(Window window)```**
 -----------------------------------------------------------------------------
 Sets up all game scenes, backgrounds, and window properties.
 
@@ -304,7 +304,7 @@ Example:
     }
 ```
 
-**```void createHumans(ArrayList<Human> humans)```**
+### **```void createHumans(ArrayList<Human> humans)```**
 -----------------------------------------------------------------------------
 Creates all player characters and NPCs (if you have them) in the game.
 
@@ -336,7 +336,7 @@ Example:
     }
 ```
 
-**```void createObjects(ArrayList<Thing> things)```**
+### **```void createObjects(ArrayList<Thing> things)```**
 -----------------------------------------------------------------------------
 Creates all interactive objects, furniture, items, and physics objects.
 
@@ -360,7 +360,7 @@ Example:
     }
 ```
 
-**```void loop()```**
+### **```void loop()```**
 -----------------------------------------------------------------------------
 Executes every frame (60 times per second at default speed).
 
