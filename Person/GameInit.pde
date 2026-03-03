@@ -199,6 +199,7 @@ void loop() {
                 gh.position.y = 0;
                 gh.velocity.x = -40;
                 gh.acceleration.x = -40;
+                gh.hunger += gh.maxHunger / 3;
                 gameManager.messageBox.showAlert(gh.firstName + " has respawned at the starting scene. Be careful this time!");
                 delay(100);
             }

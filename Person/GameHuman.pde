@@ -9,12 +9,14 @@ class GameHuman extends Human {
 
     // Hunger and money attributes
     Boolean hasHungerAndMoney = true;
-    float hunger; // 0-100, increases over time
+    float hunger;
     float money; // Money amount
+    float maxHunger = 100;
     int lastHungerUpdate; // Timer for hunger increase
     float velocityHungerUsed = 500; // Inversely proportional to hunger increase speed
     int hungerIncreaseRate = 60; // Frames between hunger increase (1 second at 60fps)
     float hungerIncreaseAmount = 0.25; // How much hunger increases each time
+    boolean isDead = false;
 
     float bobOffset = 0;
     float bobSpeed = 0.08;  // How fast to bob
@@ -64,14 +66,8 @@ class GameHuman extends Human {
             hunger += hungerIncreaseAmount;
             lastHungerUpdate = (int)(frameCount/(frameRate/60));
 
-            // Cap hunger at 100
-            if (hunger > 100) {
-                hunger = 100;
-            }
-
-            // Check for game over (hunger reaches 100)
-            if (hunger >= 100) {
-                gameOver();
+            if (hunger >= maxHunger) {
+                starve();
             }
         }
     }
@@ -83,10 +79,25 @@ class GameHuman extends Human {
       this.shiftKey = shift;
       this.mouseControls = mouse;
     }
-    // Game over method when hunger hits 100
-    void gameOver() {
-        println(this.firstName + " starved!");
-        exit(); // Quit the game
+    // Starve method when hunger hits maxHunger
+    void starve() {
+        gameManager.messageBox.showAlert(this.firstName + " starved!");
+        this.isDead = true;
+        this.show = false;
+        this.hasPhysics = false;
+        this.speed = 0;
+        this.money = 0;
+    }
+
+    void respawn() {
+        if (this.isDead) {
+            this.isDead = false;
+            this.show = true;
+            this.hasPhysics = true;
+            this.hunger = maxHunger / 2;
+            this.speed = 2;
+            gameManager.messageBox.showAlert(this.firstName + " respawned!");
+        }
     }
 
     // Method to eat food
@@ -153,14 +164,6 @@ class GameHuman extends Human {
             if (thing != null && thing != this && thing.show && thing.sceneIn == this.sceneIn) {
                 float distance = abs(this.position.x - thing.position.x);
                 
-                // Skip consumed lunchboxes
-                if (thing instanceof Lunchbox) {
-                    Lunchbox lunchboxThing = (Lunchbox) thing;
-                    if (lunchboxThing.consumed) {
-                        continue;
-                    }
-                }
-                
                 if (distance <= gameManager.window.physics.GRAB_RANGE && !thing.occupied) {
                     // Store with distance for sorting
                     candidates.add(thing);
@@ -182,22 +185,6 @@ class GameHuman extends Human {
             }
         }
         
-    }
-
-    // Enhanced grab method
-    Boolean grab(Thing thing) {
-        if (thing == null || thing.sceneIn != this.sceneIn || !thing.show) return false;
-        
-        // Check if it's a Lunchbox and already consumed
-        if (thing instanceof Lunchbox) {
-            Lunchbox lunchboxThing = (Lunchbox) thing;
-            if (lunchboxThing.consumed) {
-                return false; // Don't grab consumed lunchboxes
-            }
-        }
-        
-        // Call parent grab method
-        return super.grab(thing);
     }
 
     // Get off a chair
@@ -264,6 +251,13 @@ class GameHuman extends Human {
                        gameManager.window.scenes.getAs(sceneIn, Integer.class, color(255)) < -13500000 ? 255 : 0, 
                        getHungerBarColor(), 100, (100-hunger));
         }
+    }
+
+    void displayDead() {
+        pushMatrix();
+        rotate(90);
+        super.display();
+        popMatrix();
     }
     
     color getHungerBarColor() {
@@ -368,12 +362,16 @@ class GameHuman extends Human {
 
     // Main update loop for human
     void live() {
-        this.update();
-        this.updateHunger();
-        this.display();
-        this.controls();
-        this.checkEdges();
-        this.checkObj();
+        if (!this.isDead) {
+            this.update();
+            this.updateHunger();
+            this.display();
+            this.controls();
+            this.checkEdges();
+            this.checkObj();
+        } else {
+            this.displayDead();
+        }
     }
     
     // Background update loop for human

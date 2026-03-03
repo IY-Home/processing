@@ -721,7 +721,7 @@ class Lunchbox extends Thing implements Interactable {
 
     // Interactable interface implementation
     void onGrab(Human human) {
-      if (human instanceof GameHuman) {
+      if (human instanceof GameHuman && !this.consumed) {
         GameHuman gameHuman = (GameHuman) human;
         // When grabbed, show info about the lunchbox
         gameManager.messageBox.showEvent("Lunchbox '" + label + "' grabbed by " + gameHuman.firstName);
