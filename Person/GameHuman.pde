@@ -252,13 +252,6 @@ class GameHuman extends Human {
                        getHungerBarColor(), 100, (100-hunger));
         }
     }
-
-    void displayDead() {
-        pushMatrix();
-        rotate(90);
-        super.display();
-        popMatrix();
-    }
     
     color getHungerBarColor() {
         float hungerPercent = hunger / 100.0;
@@ -362,16 +355,12 @@ class GameHuman extends Human {
 
     // Main update loop for human
     void live() {
-        if (!this.isDead) {
             this.update();
             this.updateHunger();
             this.display();
             this.controls();
             this.checkEdges();
             this.checkObj();
-        } else {
-            this.displayDead();
-        }
     }
     
     // Background update loop for human
