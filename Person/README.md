@@ -31,16 +31,18 @@ A modular, object-oriented 2D game framework built in Processing. This project p
 
 ## **Project Structure**
 
-### **Main.pde**
+### **Core framework**
+
+#### **Main.pde**
 - Entry point with `setup()` and `draw()` functions
 - Creates GameManager instance via user-defined `createGameManager()`
 - Sets window title and starts the game
 
-### **KeyHandlers.pde**
+#### **KeyHandlers.pde**
 - Key input handling and event system
 - `KeyManager` class tracks key states
 
-### **GameManager.pde and BaseClasses.pde**
+#### **GameManager.pde**
 - **`GameManager`** - Central class containing:
   - Global variables and physics constants
   - Collections of all objects, humans, and input boxes
@@ -52,11 +54,14 @@ A modular, object-oriented 2D game framework built in Processing. This project p
 - **`ImageManager`** - Image storage and asynchronous image loading and caching
 - **`CircularArrayList`** - Extended ArrayList with looping and type-safe getters
 
+#### **BaseClasses.pde**
 - **`Thing`** - Abstract base class for all game objects
 - **`Human`** - Basic human with drawing and movement logic
 - **`Interactable`** - Interface for interactive objects
 - **`KeyEvents`** - Interface for objects that respond to keyboard input
 - **`InputBox`** - Text input UI with password support and callbacks
+
+### **Examples**
 
 ### **LoadingManager.pde**
 - Example of extending GameManager to add custom features
@@ -177,7 +182,7 @@ A modular, object-oriented 2D game framework built in Processing. This project p
 
 ---
 
-## Getting Started ##
+## Getting Started and GameInit.pde##
 
 - To start building your game with this framework, you only need to edit GameInit.pde and create your own files to contain your classes.
 
@@ -462,7 +467,7 @@ To add an image to ImageManager, the default is to load the image in the constru
 
 ---
 
-## **EXAMPLES PROVIDED**
+## **Examples Provided**
 
 1. **GameInit.pde** - Complete game setup with scenes, characters, and objects
 2. **ObjectClasses.pde** - Various object types demonstrating different features
