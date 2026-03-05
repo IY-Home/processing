@@ -205,4 +205,19 @@ void loop() {
             }
         }
     }
+    gameManager.window.drawCustomCursor(() -> {
+        drawCustomCursor();
+});
+}
+void drawCustomCursor() {
+    // Circle
+    fill(0, 100, 255, 100);
+    stroke(0, 50, 200);
+    ellipse(mouseX, mouseY, 20, 20);
+    
+    // Red plus
+    stroke(255, 0, 0);
+    strokeWeight(3);
+    line(mouseX - 6, mouseY, mouseX + 6, mouseY);
+    line(mouseX, mouseY - 6, mouseX, mouseY + 6);
 }

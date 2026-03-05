@@ -102,6 +102,8 @@ class LoadingManager {
     void update() {
         if (!isLoading) return;
         
+        noCursor();
+        
         frameCounter++;
         
         // SPECIAL HANDLING: Waiting for images to load in background
