@@ -70,7 +70,7 @@ class BouncyBall extends Ball implements Interactable {
                 ((BouncyBall) other).rebounding = true;
         }
     }
-    void onGrab(Human human) {} void onRelease() {} boolean isGrabbable() { return true; }
+    void onGrab(Human human) {} void onRelease(Human human) {} boolean isGrabbable() { return true; }
     void onInteract(Human human) {
       int direction = (round(random(0,1)) == 1) ? 1 : -1;
       if (gameManager.keyManager.isKeyPressed(LEFT)) direction = -1;
@@ -126,7 +126,7 @@ class Shirt extends Thing implements Interactable {
         return this.grabbable && !this.held && !this.occupied;
     }
 
-    void onRelease() {
+    void onRelease(Human human) {
     }
 
 }
@@ -250,7 +250,7 @@ class Chair extends Thing implements Interactable {
         return this.grabbable && !this.held && !this.occupied;
     }
 
-    void onRelease() {
+    void onRelease(Human human) {
     }
 }
 
@@ -347,7 +347,7 @@ class Door extends Thing implements Interactable {
         return false;
     }
 
-    void onRelease() {
+    void onRelease(Human human) {
         // Doors don't need to be released since they trigger immediately
     }
     
@@ -472,7 +472,7 @@ class Cupboard extends Thing implements Interactable {
        return true;
     }
 
-    void onRelease() {
+    void onRelease(Human human) {
         // Cupboards trigger immediately, no release needed
     }
 
@@ -550,7 +550,7 @@ class Drone extends Thing implements Interactable {
     void onGrab(Human human) {
       if (status.equals("Flying")) human.release();
     } 
-    void onRelease() {} 
+    void onRelease(Human human) {} 
     void onInteract(Human human) {}
     boolean isGrabbable() { return !(status.equals("Flying")); };
 
@@ -734,7 +734,7 @@ class Lunchbox extends Thing implements Interactable {
         return this.grabbable && !this.held && !this.occupied && !this.consumed;
     }
 
-    void onRelease() {
+    void onRelease(Human human) {
     }
 
     
@@ -942,7 +942,8 @@ class CashBag extends Thing implements Interactable {
       return true;
     }
 
-    void onRelease() {
+    void onRelease(Human human) {
+        lastGrabbedHuman = null;
     }
 
     // Check if entered passcode is correct
@@ -1115,4 +1116,82 @@ class PreFilledCupboard extends Cupboard {
         text(this.label, position.x, position.y - cupboardHeight + 20);
         textAlign(LEFT);
     }
+}
+
+class SpeedBooster extends Thing implements Interactable {
+  float boostMultiplier = 2.0;
+  color boosterColor;
+  boolean active = true;
+  
+  SpeedBooster(float x, int scene, float multiplier) {
+    super();
+    this.initialize(x, height * 0.5);
+    this.sceneIn = scene;
+    this.boostMultiplier = multiplier;
+    this.boosterColor = color(0, 255, 255); // Cyan
+    this.grabbable = true;
+    this.checkTouchRadius = 30;
+  }
+  
+  void display() {
+    if (show && active) {
+      // Pulsing effect
+      float pulse = sin(millis() * 0.01) * 0.2 + 0.8;
+      
+      pushMatrix();
+      translate(position.x, position.y);
+      scale(pulse);
+      
+      // Glow effect
+      for (int i = 3; i > 0; i--) {
+        fill(red(boosterColor), green(boosterColor), blue(boosterColor), 50 / i);
+        noStroke();
+        ellipse(0, 0, 40 + i * 10, 40 + i * 10);
+      }
+      
+      // Main body
+      fill(boosterColor);
+      stroke(255);
+      strokeWeight(2);
+      
+      // Lightning bolt shape
+      beginShape();
+      vertex(-15, -15);
+      vertex(0, -5);
+      vertex(-5, 5);
+      vertex(10, 15);
+      vertex(0, 5);
+      vertex(5, -5);
+      vertex(-15, -15);
+      endShape();
+      
+      // "x2" text
+      fill(255);
+      textSize(14);
+      textAlign(CENTER);
+      text("x" + int(boostMultiplier), 0, -25);
+      
+      popMatrix();
+    }
+  }
+  
+  void onGrab(Human human) {
+    if (human instanceof GameHuman && active) {
+      GameHuman gh = (GameHuman) human;
+      
+      // Apply boost
+      gh.speed *= boostMultiplier;
+      active = false;
+      
+      // Visual feedback
+      gameManager.messageBox.showEvent("SPEED BOOST! " + boostMultiplier + "x faster!");
+    
+      gh.release(); // Release immediately after grabbing
+      gameManager.objects.remove(this); // Remove from objects list
+    }
+  }
+  
+  boolean isGrabbable() { return active; }
+  void onInteract(Human human) {}
+  void onRelease(Human human) {}
 }

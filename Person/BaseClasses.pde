@@ -2,7 +2,7 @@
 interface Interactable {
     void onGrab(Human human);          // Called when object is grabbed
     boolean isGrabbable();             // Returns if object can be grabbed
-    void onRelease();                  // Called when object is released
+    void onRelease(Human human);       // Called when object is released
     void onInteract(Human human);      // Called when SHIFT is pressed when object held
 }
 
@@ -21,6 +21,7 @@ abstract class Thing {
     float groundHeightOffset = 0;
     float checkTouchRadius = 0;
     boolean checkTouchY = false;
+    boolean checkTouchWide = false;
     boolean drawBehindHumans = false;
     boolean drawInBackground = false;
     boolean drawInForeground = false;
@@ -371,7 +372,7 @@ class Human extends Thing {
 
             // Call onRelease if the object is Interactable
             if (grabObj instanceof Interactable) {
-                ((Interactable) grabObj).onRelease();
+                ((Interactable) grabObj).onRelease(this);
             }
             
             grabObj = null; // make grabObj null again
@@ -671,6 +672,8 @@ class MessageBox {
     // Styling
     color bgColor = color(0, 0, 0, 200);
     color textColor = color(255, 255, 255);
+    color eventTextColor = color(200, 200, 255);
+    color alertTextColor = color(255, 150, 150);
     color borderColor = color(0, 100, 200);
     color eventBorderColor = color(0, 100, 200);
     color alertBorderColor = color(255, 100, 100);
@@ -708,11 +711,13 @@ class MessageBox {
     void showAlert(String message) {
         showMessage("[!] " + message);
         borderColor = alertBorderColor;
+        textColor = alertTextColor;
     }
     
     void showEvent(String message) {
         showMessage("> " + message);
         borderColor = eventBorderColor;
+        textColor = eventTextColor;
     }
     
     // Check if mouse is over the dialogue box
@@ -816,7 +821,7 @@ class MessageBox {
         
         // Draw text (offset by handle if needed)
         float textY = y + padding + (draggable ? handleHeight : 0);
-        
+
         fill(red(textColor), green(textColor), blue(textColor), fadeAlpha);
         textSize(textSize + 4);
         textAlign(LEFT, TOP);

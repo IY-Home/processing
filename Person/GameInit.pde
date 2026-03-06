@@ -3,7 +3,7 @@ GameManager createGameManager() {
     // If you need to, put any other code you want to have executed at the very start of the program here.
     
     // Change Game Manager variables, e.g.
-    GameManagerWithLoading gm = new GameManagerWithLoading("My Game", "2.0");
+    GameManagerWithLoading gm = new GameManagerWithLoading("Person_City", "3.1");
     
     gm.messageBox.visible = true;
     
@@ -162,6 +162,7 @@ void createObjects(ArrayList <Thing> things) {
     things.add(new PreFilledCupboard("Food", color(180), 651, 180, 120, 3, 60, myFood));
     things.add(new BouncyBall("objects/football.png", random(65, 80), 200, 0.85, 0));
     things.add(new BouncyBall("objects/basketball.png", random(65, 80), 800, 0.85, 1));
+    things.add(new SpeedBooster(1100, 4, 2));
     things.add(new Chair(woodColor, 700, 0));
     Chair chair1 = new Chair(woodColor, 900, 1);
     Shirt shirt1 = new Shirt(color(255, 0, 0), 900, 1);

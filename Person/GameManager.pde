@@ -76,20 +76,26 @@ class GameManager {
         // Draw background objects first
         for (Thing obj : objects) {
             if (obj.drawBehindHumans && obj.inScene()) {
+                push();
                 obj.display();
+                pop();
             }
         }
         
         // Update humans
         for (Human human : mainHumans) {
             if (human.inScene()) {
+                push();
                 human.live();
+                pop();
             }
         }
         
         for (Thing obj : objects) {
             if (obj.drawInBackground && !obj.drawBehindHumans && obj.inScene()) {
+                push();
                 obj.display();
+                pop();
             }
         }
         
@@ -101,7 +107,9 @@ class GameManager {
                     obj.update();
                     obj.show();
                     if (!obj.drawInBackground && !obj.drawInForeground && !obj.drawBehindHumans) {
+                        push();
                         obj.display();
+                        pop();
                     }
                     obj.checkEdges();
                 } else ((Human)obj).live();
@@ -110,8 +118,8 @@ class GameManager {
                 for (int j = 0; j < objects.size(); j++) {
                     Thing other = objects.get(j);
                     if (other != null && other != obj && other.inScene() &&
-                        ((obj.checkTouchY && PVector.dist(obj.position, other.position) < 200) || 
-                         (!obj.checkTouchY && abs(other.position.x - obj.position.x) < 200))) {
+                        ((obj.checkTouchY && (PVector.dist(obj.position, other.position) < 200 || obj.checkTouchWide)) || 
+                         (!obj.checkTouchY && (abs(other.position.x - obj.position.x) < 200 || obj.checkTouchWide)))) {
                         obj.checkTouch(other);
                     }
                 }
@@ -122,7 +130,7 @@ class GameManager {
                         float dist = obj.checkTouchY ? 
                             PVector.dist(obj.position, human.position) : 
                             abs(obj.position.x - human.position.x);
-                        if (dist < 250) {
+                        if (dist < 250 || obj.checkTouchWide) {
                             obj.checkTouch(human);
                             human.checkTouch(obj);
                         }
@@ -137,7 +145,9 @@ class GameManager {
         // Finally, draw objects in the front
         for (Thing obj : objects) {
             if (obj.drawInForeground && !obj.drawInBackground && !obj.drawBehindHumans && obj.inScene()) {
+                push();
                 obj.display();
+                pop();
             }
         }
         // Update input boxes
