@@ -134,9 +134,10 @@ void createHumans(ArrayList <Human> humans) {
     // Hide Nick for now, so comment out: humans.add(nick);
     
     String humanName3 = "Joe";
-    humanScene = 0;
-    ImageHuman joe = new ImageHuman(humanName2, "objects/person.png", width * 0.3, humanScene);
-    // Hide Joe for now, so comment out: humans.add(joe);
+    humanScene = 3;
+    ImageHuman joe = new ImageHuman(humanName3, "objects/person.png", width * 0.3, humanScene);
+    joe.setControls(65, 68, 87, 83, 88, false); // W=left, S=down, A=left, D=right, X=shift(interact)
+    humans.add(joe);
 }
 
 void createObjects(ArrayList <Thing> things) {
