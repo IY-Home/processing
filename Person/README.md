@@ -47,10 +47,9 @@ A modular, object-oriented 2D game framework built in Processing. This project p
   - Global variables and physics constants
   - Collections of all objects, humans, and input boxes
   - Main update loop
-  - References to Window, KeyManager, Debug, and ImageManager systems
+  - References to Window, KeyManager, and ImageManager systems
 - **`Window`** - Display/background and scene management
 - **`KeyManager`** - Key event handling
-- **`Debug`** - Debugging HUD with tracked human info
 - **`ImageManager`** - Image storage and asynchronous image loading and caching
 - **`CircularArrayList`** - Extended ArrayList with looping and type-safe getters
 
@@ -80,6 +79,9 @@ A modular, object-oriented 2D game framework built in Processing. This project p
 - **`Drone`** - Controllable flying device with battery and recharging
 - **`Lunchbox`** - Consumable food items with price and hunger restoration
 - **`CashBag`** - Password-protected money bags with cooldown system
+
+#### **Debug.pde**
+- **`Debug`** - Debugging HUD with tracked human info
 
 ## **Example Gameplay Mechanics**
 
