@@ -144,33 +144,8 @@ class GameHuman extends Human {
             }
         }
         
-        // SECOND PRIORITY: Find other potential objects in range
-        ArrayList<Thing> candidates = new ArrayList<Thing>();
-        
-        for (Thing thing : gameManager.objects) {
-            if (thing != null && thing != this && thing.show && thing.sceneIn == this.sceneIn) {
-                float distance = abs(this.position.x - thing.position.x);
-                
-                if (distance <= grabRange && !thing.occupied) {
-                    // Store with distance for sorting
-                    candidates.add(thing);
-                }
-            }
-        }
-        
-        // Sort by distance (closest first)
-        candidates.sort((a, b) -> {
-            float distA = abs(this.position.x - a.position.x);
-            float distB = abs(this.position.x - b.position.x);
-            return Float.compare(distA, distB);
-        });
-        
-        // Try each candidate in order until one is successfully grabbed
-        for (Thing thing : candidates) {
-            if (this.grab(thing)) {
-                return;  // Successfully grabbed something!
-            }
-        }
+        // SECOND PRIORITY: Find other potential objects in range with default function
+        super.grabClosest(objects);
         
     }
 
