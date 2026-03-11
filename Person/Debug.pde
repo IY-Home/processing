@@ -154,23 +154,13 @@ class Debug {
             yPos += 5;
             
             // ===== CLOSEST OBJECT =====
-            text("=== CLOSEST OBJECT (within 300px) ===", 20, yPos);
+            text("=== CLOSEST OBJECT (within grabRange - " + nf(trackedHuman.grabRange, 0, 0) + "px) ===", 20, yPos);
             yPos += lineHeight;
             
             Thing closest = null;
-            float closestDist = Float.MAX_VALUE;
-            
-            for (Thing obj : gameManager.objects) {
-                if (obj != trackedHuman && obj.show && 
-                    obj.sceneIn == trackedHuman.sceneIn) {
-                    float dist = PVector.dist(trackedHuman.position, obj.position);
-                    if (dist < closestDist && dist < 300) {
-                        closestDist = dist;
-                        closest = obj;
-                    }
-                }
-            }
-            
+            ArrayList<Thing> nearby = trackedHuman.getClosestObjects(gameManager.objects, trackedHuman.grabRange);
+            closest = nearby.size() > 0 ? nearby.get(0) : null;
+
             if (closest != null) {
                 String typeName = closest.getClass().getSimpleName();
                 fill(debugColor);
@@ -179,7 +169,7 @@ class Debug {
                 yPos += lineHeight;
                 
                 text("Distance:", 20, yPos);
-                text(nf(closestDist, 0, 1) + " px", 20 + col2, yPos);
+                text(nf(PVector.dist(trackedHuman.position, closest.position), 0, 1) + " px", 20 + col2, yPos);
                 yPos += lineHeight;
                 
                 text("Position:", 20, yPos);
@@ -231,15 +221,15 @@ class Debug {
         ellipse(trackedHuman.position.x, trackedHuman.position.y, 
                 trackedHuman.grabRange * 2, trackedHuman.grabRange * 2);
         
-        // Draw 300px detection range
+        // Draw detection range
         stroke(255, 255, 0, 100);
-        ellipse(trackedHuman.position.x, trackedHuman.position.y, 600, 600);
+        ellipse(trackedHuman.position.x, trackedHuman.position.y, trackedHuman.grabRange * 2, trackedHuman.grabRange * 2);
         
         // Draw line to closest object
         Thing closest = null;
         ArrayList<Thing> nearby = trackedHuman.getClosestObjects(gameManager.objects, trackedHuman.grabRange);
         closest = nearby.size() > 0 ? nearby.get(0) : null;
-        println("Grabrange: " + trackedHuman.grabRange + ", Nearby count: " + nearby.size());
+
         if (closest != null) {
             stroke(255, 255, 0, 200);
             strokeWeight(1);

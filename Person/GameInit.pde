@@ -131,7 +131,7 @@ void createHumans(ArrayList <Human> humans) {
     setTrackedHuman(isaac);
 
     debugger = new Debug();
-    debugger.setDebug(isaac, true); // Set to true to show debug
+    debugger.setDebug(isaac, false); // Set to true to show debug
 
     String humanName2 = "Nick";
     humanScene = 0;
