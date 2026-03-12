@@ -71,7 +71,7 @@ class GameManager {
     void updateThings() {
         // Draw background objects first
         for (Thing obj : objects) {
-            if (obj.drawBehindHumans && obj.inScene()) {
+            if (obj.drawBehindHumans && obj.inScene() && obj.show) {
                 push();
                 obj.display();
                 pop();
@@ -100,7 +100,7 @@ class GameManager {
         }
         
         for (Thing obj : objects) {
-            if (obj.drawInBackground && !obj.drawBehindHumans && obj.inScene()) {
+            if (obj.drawInBackground && !obj.drawBehindHumans && obj.inScene() && obj.show) {
                 push();
                 obj.display();
                 pop();
@@ -113,8 +113,7 @@ class GameManager {
             if (obj != null && obj.inScene()) {
                 if (!(obj instanceof Human)) {
                     obj.update();
-                    obj.show();
-                    if (!obj.drawInBackground && !obj.drawInForeground && !obj.drawBehindHumans) {
+                    if (!obj.drawInBackground && !obj.drawInForeground && !obj.drawBehindHumans && obj.show) {
                         push();
                         obj.display();
                         pop();
@@ -152,7 +151,7 @@ class GameManager {
         }
         // Finally, draw objects in the front
         for (Thing obj : objects) {
-            if (obj.drawInForeground && !obj.drawInBackground && !obj.drawBehindHumans && obj.inScene()) {
+            if (obj.drawInForeground && !obj.drawInBackground && !obj.drawBehindHumans && obj.inScene() && obj.show) {
                 push();
                 obj.display();
                 pop();

@@ -14,7 +14,8 @@ interface KeyEvents {
 // Base class for all game objects
 abstract class Thing {
     PVector position, velocity, acceleration; // Physics properties
-    boolean held, grabbable, rested, occupied, show;
+    boolean held, grabbable, rested, occupied;
+    boolean show = true; // Default is true
     boolean hasPhysics = true; 
     float elasticity = 0, friction = 0.98f;
     int sceneIn = 0; // Scene this object belongs to
@@ -32,7 +33,7 @@ abstract class Thing {
         position = new PVector(width / 2, gameManager.window.getGroundHeightAt(width/2));
         velocity = new PVector();
         acceleration = new PVector();
-        held = rested = occupied = show = false;
+        held = rested = occupied = false;
         grabbable = true;
     }
 
@@ -45,7 +46,6 @@ abstract class Thing {
         velocity.set(0, 0);
         acceleration.set(0, 0);
         occupied = false;
-        sceneIn = 0;
     }
 
     // Initialize with specific position
@@ -54,7 +54,6 @@ abstract class Thing {
         velocity.set(0, 0);
         acceleration.set(0, 0);
         occupied = false;
-        sceneIn = 0;
     }
 
     // Update object physics

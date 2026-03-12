@@ -149,13 +149,13 @@ void createObjects(ArrayList <Thing> things) {
     color woodColor = color(200, 100, 0);  
 
     // Add doors for scene transitions
-    things.add(new Door(true, width * 0.9, width * 0.1, woodColor, 0, 1));
-    things.add(new Door(true, width * 0.9, width * 0.1, woodColor, 1, 2));
-    things.add(new Door(true, width * 0.9, width * 0.1, woodColor, 2, 3));
-    things.add(new Door(true, width * 0.9, width * 0.1, woodColor, 3, 4));
-    things.add(new Door(true, width * 0.9, width * 0.1, woodColor, 4, 5));
-    things.add(new Door(true, width * 0.9, width * 0.1, color(192, 168, 0), 5, 6));
-    Door winningDoor = new Door(true, width * 0.9, width * 0.1, color(0, 200, 255), 6, 0);
+    things.add(new Door(width * 0.9, width * 0.1, woodColor, 0, 1));
+    things.add(new Door(width * 0.9, width * 0.1, woodColor, 1, 2));
+    things.add(new Door(width * 0.9, width * 0.1, woodColor, 2, 3));
+    things.add(new Door(width * 0.9, width * 0.1, woodColor, 3, 4));
+    things.add(new Door(width * 0.9, width * 0.1, woodColor, 4, 5));
+    things.add(new Door(width * 0.9, width * 0.1, color(192, 168, 0), 5, 6));
+    Door winningDoor = new Door(width * 0.9, width * 0.1, color(0, 200, 255), 6, 0);
     winningDoor.isOneWay = true;
     things.add(winningDoor);
     
@@ -170,7 +170,12 @@ void createObjects(ArrayList <Thing> things) {
     things.add(new BouncyBall("objects/football.png", random(65, 80), 200, 0.85, 0));
     things.add(new BouncyBall("objects/basketball.png", random(65, 80), 800, 0.85, 1));
     things.add(new SpeedBooster(1100, 4, 2));
+    Chair chair0 = new Chair(woodColor, 400, 0);
+    chair0.show = false;
+    things.add(chair0); // Will not be visible
+
     things.add(new Chair(woodColor, 700, 0));
+
     Chair chair1 = new Chair(woodColor, 900, 1);
     Shirt shirt1 = new Shirt(color(255, 0, 0), 900, 1);
     chair1.putObjOnChair(shirt1);
@@ -190,7 +195,6 @@ void createObjects(ArrayList <Thing> things) {
     things.add(new CashBag(color(200, 200, 50), 600, 1, 100, "Hello", "A common English greeting!")); // $100, passcode 2468
     things.add(new CashBag(color(50, 50, 200), 800, 2, 200, "P@55$ec6re", "You shall never guess it.")); // $200, passcode ????????
     things.add(new CashBag(color(255, 200, 0), width*0.75, 6, 1000, "Iwon!", "You found the prize! The password is 'Iwon!'.")); // $1000, prize at scene 6. After the 'holey' scene 5.
-   
 }
 
 void loop() {
@@ -217,7 +221,7 @@ void loop() {
     }
     gameManager.window.drawCustomCursor(() -> {
         drawCustomCursor();
-});
+    });
 }
 void drawCustomCursor() {
     // Circle

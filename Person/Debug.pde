@@ -26,7 +26,7 @@ class Debug {
     void display() {
         if (!showDebug) return;
         
-        pushMatrix();
+        push();
         
         // Dark semi-transparent background
         fill(0, 0, 0, 200);
@@ -206,13 +206,13 @@ class Debug {
         text("Tracked: " + 
              (trackedHuman != null ? trackedHuman.name : "NONE"), 20, yPos);
         
-        popMatrix();
+        pop();
     }
     
     void drawVisualHelpers() {  
         if (!showDebug || trackedHuman == null) return;
         
-        pushMatrix();
+        push();
         noFill();
         
         // Draw grab range
@@ -237,7 +237,7 @@ class Debug {
                  closest.position.x, closest.position.y);
         }
         
-        popMatrix();
+        pop();
 
         gameManager.window.drawKeyframeMarkers();
     }

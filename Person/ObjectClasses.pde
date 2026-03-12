@@ -21,11 +21,9 @@ class Ball extends Thing {
 
     // Display the ball - REQUIRED by abstract class Thing
     void display() {
-        if (this.show) {
             strokeWeight(2);
             fill(ballColor);
             ellipse(this.position.x, this.position.y, size, size);
-        }
     }
 }
 
@@ -102,11 +100,9 @@ class Shirt extends Thing implements Interactable {
 
     // Display the shirt - REQUIRED by abstract class Thing
     void display() {
-        if (this.show) {
             strokeWeight(2);
             fill(this.shirtColor);
             rect(this.position.x - 35, this.position.y - 64, 70, 100);
-        }
     }
     
     void onGrab(Human human) {
@@ -156,13 +152,11 @@ class Chair extends Thing implements Interactable {
 
     // Display the chair - REQUIRED by abstract class Thing
     void display() {
-        if (this.show) {
-            strokeWeight(2);
-            fill(chairColor);
-            rect(this.position.x - 40, this.position.y - 60, 20, 92);
-            rect(this.position.x + 20, this.position.y - 60, 20, 92);
-            rect(this.position.x - 45, this.position.y - 60, 90, 20);
-        }
+        strokeWeight(2);
+        fill(chairColor);
+        rect(this.position.x - 40, this.position.y - 60, 20, 92);
+        rect(this.position.x + 20, this.position.y - 60, 20, 92);
+        rect(this.position.x - 45, this.position.y - 60, 90, 20);
     }
 
     void putObjOnChair(Thing other) {
@@ -262,6 +256,8 @@ class Door extends Thing implements Interactable {
     float posXFrom; // Previous X position
     float posXDes; // New X position in destination scene
     color frameColor;
+
+    boolean showDoor = true;
     
     private int currentDisplayScene;
     private int targetScene;
@@ -270,8 +266,7 @@ class Door extends Thing implements Interactable {
     boolean isOneWay;
     boolean sittingOnGround;
 
-    Door(boolean show, float posX, float posXDes, color frameColor, int sceneIn, int sceneDes) {
-        this.show = show;
+    Door(float posX, float posXDes, color frameColor, int sceneIn, int sceneDes) {
         this.initialize();
         this.position = new PVector(posX, height*gameManager.window.getGroundHeightAt(sceneIn, posX));
         this.velocity = new PVector(0, 0);
@@ -297,7 +292,7 @@ class Door extends Thing implements Interactable {
     }
 
     void display() {
-        if (show) {
+        if (this.showDoor) {
             push();
             checkDestination(this);
             fill(frameColor);
@@ -365,14 +360,9 @@ class Door extends Thing implements Interactable {
                     if (this.sittingOnGround) this.position.y = height*gameManager.window.getGroundHeightAt(this.position.x);
                 }
                 
-                this.show = true;
+                this.showDoor = true;
             }
-        } else {
-            // Not in either of this door's scenes - hide it
-            if (this.show) {
-                this.show = false;
-            }
-        }
+        } 
     }
     
     void update() {
@@ -412,9 +402,7 @@ class Cupboard extends Thing implements Interactable {
     }
 
     // Display the cupboard - REQUIRED by abstract class Thing
-    void display() {
-        if (!show) return;
-        
+    void display() {        
         strokeWeight(2);
         fill(woodColor);
         rect(position.x - cupboardWidth / 2, position.y - cupboardHeight + 36, cupboardWidth, cupboardHeight);
@@ -679,7 +667,7 @@ class Lunchbox extends Thing implements Interactable {
 
     // Display the lunchbox - REQUIRED by abstract class Thing
     void display() {
-        if (this.show && !consumed) {
+        if (!consumed) {
             textAlign(CENTER);
             strokeWeight(2);
             // Draw lunchbox body
@@ -829,7 +817,7 @@ class CashBag extends Thing implements Interactable {
 
     // Display the cash bag - REQUIRED by abstract class Thing
     void display() {
-        if (this.show && !unlocked) {
+        if (!unlocked) {
             // Draw cash bag
             fill(bagColor);
             stroke(0);
@@ -871,7 +859,7 @@ class CashBag extends Thing implements Interactable {
 
             // Reset text alignment
             textAlign(LEFT);
-        } else if (this.show && unlocked) {
+        } else if (unlocked) {
             // Draw opened/empty bag
             fill(150);
             stroke(0);
@@ -1071,7 +1059,6 @@ class PreFilledCupboard extends Cupboard {
     
     @Override
     void display() {
-        if (!show) return;
         strokeWeight(2);
         // Draw cupboard body
         fill(woodColor);
@@ -1133,7 +1120,7 @@ class SpeedBooster extends Thing implements Interactable {
   }
   
   void display() {
-    if (show && active) {
+    if (active) {
       // Pulsing effect
       float pulse = sin(millis() * 0.01) * 0.2 + 0.8;
       
