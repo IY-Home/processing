@@ -13,7 +13,6 @@ class Ball extends Thing {
         this.velocity = new PVector(0, 0);
         this.acceleration = new PVector(0, 0);
         this.grabbable = true;
-        this.occupied = false;
         this.sceneIn = sceneIn;
         this.hasPhysics = true; // Ball has physics
         this.groundHeightOffset = radius;
@@ -93,7 +92,6 @@ class Shirt extends Thing implements Interactable {
         this.acceleration = new PVector(0, 0);
         this.elasticity = 0.75;
         this.grabbable = true;
-        this.occupied = false;
         this.sceneIn = sceneIn;
         this.hasPhysics = true; // Shirt has physics
     }
@@ -119,7 +117,7 @@ class Shirt extends Thing implements Interactable {
     }
 
     boolean isGrabbable() {
-        return this.grabbable && !this.held && !this.occupied;
+        return this.grabbable && !this.held;
     }
 
     void onRelease(Human human) {
@@ -132,6 +130,7 @@ class Chair extends Thing implements Interactable {
     color chairColor;
     Thing restedObj;
     boolean humanOnChair = false;
+    boolean occupied; // Whether chair is currently occupied (by human or object)
 
     Chair(color chairColor, float posX, int sceneIn) {
         this.chairColor = chairColor;
@@ -166,6 +165,7 @@ class Chair extends Thing implements Interactable {
           other.velocity.x = 0;
           this.occupied = true;
           this.restedObj = other;
+          this.held = false;
     }
 
     void onTouch(Thing other, float distance) {
@@ -199,6 +199,16 @@ class Chair extends Thing implements Interactable {
         }
     }
 
+    void update() {
+      super.update();
+      if (restedObj == null || !restedObj.rested || restedObj.held || !restedObj.show) {
+            this.occupied = false;
+            this.humanOnChair = false;
+            this.restedObj = null;
+            this.held = false;
+      }
+    }
+
     // Press SHIFT to stand on chair
     void onInteract(Human human) {
       this.humanStand(human);
@@ -225,14 +235,6 @@ class Chair extends Thing implements Interactable {
         gameHuman.release();
         
         return;
-      }
-    }
-    void update() {
-      super.update();
-      if (restedObj == null || !restedObj.rested || restedObj.held) {
-            this.occupied = false;
-            this.humanOnChair = false;
-            this.restedObj = null;
       }
     }
     // Interactable interface implementation
@@ -272,7 +274,6 @@ class Door extends Thing implements Interactable {
         this.velocity = new PVector(0, 0);
         this.elasticity = 0;
         this.grabbable = false;
-        this.occupied = false;
         this.drawInBackground = true; 
         this.drawBehindHumans = true; // Behind humans
         this.sceneDes = sceneDes;
@@ -320,7 +321,6 @@ class Door extends Thing implements Interactable {
         if (!(other instanceof Door) && !(other instanceof Human)) {
             other.position.x = posXNew < width / 2 ? posXNew + 120 + random(-20, 20) : posXNew - 120 - random(-20, 20);
             other.sceneIn = targetScene;
-            other.occupied = false;
         }
     }
 
@@ -471,12 +471,10 @@ class Cupboard extends Thing implements Interactable {
                 other.position.x = this.position.x;
                 shelves.add(other);
                 other.sceneIn = this.sceneDes;
-                other.occupied = false;
                 other.rested = false;
                 other.velocity.x = 0;
             } else {
                 shelves.remove(other);
-                other.occupied = false;
             }
         }
     }
@@ -658,7 +656,6 @@ class Lunchbox extends Thing implements Interactable {
         this.acceleration = new PVector(0, 0);
         this.elasticity = 0.5;
         this.grabbable = true;
-        this.occupied = false;
         this.sceneIn = sceneIn;
         this.friction = 0.9;
         this.groundHeightOffset = 26;
@@ -718,7 +715,7 @@ class Lunchbox extends Thing implements Interactable {
     }
 
     boolean isGrabbable() {
-        return this.grabbable && !this.held && !this.occupied && !this.consumed;
+        return this.grabbable && !this.held && !this.consumed;
     }
 
     void onRelease(Human human) {
@@ -787,7 +784,6 @@ class CashBag extends Thing implements Interactable {
         this.acceleration = new PVector(0, 0);
         this.elasticity = 0.3;
         this.grabbable = false;
-        this.occupied = false;
         this.sceneIn = sceneIn;
         this.friction = 0.85;
         this.groundHeightOffset = 36;

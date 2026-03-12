@@ -14,7 +14,7 @@ interface KeyEvents {
 // Base class for all game objects
 abstract class Thing {
     PVector position, velocity, acceleration; // Physics properties
-    boolean held, grabbable, rested, occupied;
+    boolean held, grabbable, rested;
     boolean show = true; // Default is true
     boolean hasPhysics = true; 
     float elasticity = 0, friction = 0.98f;
@@ -33,7 +33,7 @@ abstract class Thing {
         position = new PVector(width / 2, gameManager.window.getGroundHeightAt(width/2));
         velocity = new PVector();
         acceleration = new PVector();
-        held = rested = occupied = false;
+        held = rested = false;
         grabbable = true;
     }
 
@@ -45,7 +45,6 @@ abstract class Thing {
         position.set(width / 2, gameManager.window.getGroundHeightAt(width/2));
         velocity.set(0, 0);
         acceleration.set(0, 0);
-        occupied = false;
     }
 
     // Initialize with specific position
@@ -53,7 +52,6 @@ abstract class Thing {
         position.set(startX, startY);
         velocity.set(0, 0);
         acceleration.set(0, 0);
-        occupied = false;
     }
 
     // Update object physics
@@ -364,14 +362,14 @@ class Human extends Thing {
                 this.setGrabObj(thing);
                 interactable.onGrab(this);
                 return true;
-            } else if (thing.show) {
+            } else {
                 interactable.onGrab(this);
                 return true;
             }
-        } else if (thing.grabbable && thing.show) {
+        } else if (thing.grabbable) {
             this.setGrabObj(thing);
             return true;
-        } else if (!thing.grabbable && thing.show) { return false; }
+        } else if (!thing.grabbable) { return false; }
         return false;
     }
 
