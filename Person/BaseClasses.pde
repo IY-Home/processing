@@ -159,6 +159,7 @@ class Human extends Thing {
     float lastShiftPress = 0;
     float shiftCooldown = 300; // 300ms cooldown between SHIFT actions
     boolean shiftPressed = false;
+    float mouseDragX = width/2;
 
     // Controls
     boolean hasControls = true;
@@ -424,7 +425,7 @@ class Human extends Thing {
     }
 
     void mouseLeftDown() {
-        if (mouseX >= width / 2) {
+        if (mouseX >= mouseDragX) {
             rightKeyDown();
         } else {
             leftKeyDown();
@@ -441,6 +442,7 @@ class Human extends Thing {
     void noKeyDown() {
         this.velocity.x = 0;
         this.acceleration.x = 0;
+        this.mouseDragX = mouseX;
     }
 
     // Enhanced controls method with chair, jumping, and SHIFT interactions
