@@ -766,7 +766,7 @@ class ImageManager {
 public static class Constants { 
     public static final class Framework {
         public static final String NAME = "Person Framework"; 
-        public static final String FRAMEWORK_VERSION = "3.7.0";
+        public static final String FRAMEWORK_VERSION = "4.0.0";
     }
 
     // Physics constants - not final, as game may need changing gravity, groundHeight, grabRange, etc.
