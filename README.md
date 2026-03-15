@@ -29,7 +29,7 @@ A modular, object-oriented 2D game framework built in Processing. This project p
 - **Custom Cursor** - Blue circular cursor design
 - **Loading Screen** - Animated splash screen with progress bar and rotating tips
 
-## **Project Structure**
+## **Project Structure (in ```/Source```)**
 
 ### **Core framework**
 
@@ -187,7 +187,7 @@ A modular, object-oriented 2D game framework built in Processing. This project p
 
 - To start building your game with this framework, you only need to edit GameInit.pde and create your own files to contain your classes.
 
-1. Import all files into Processing (download their IDE on [their website](https://processing.org)), either by cloning this repository or downloading the individual files: `BaseClasses.pde` (base classes), `GameHuman.pde` (Human extensions), `ObjectClasses.pde` (sample object classes), `GameManager.pde` (core systems), `KeyHandlers.pde` (input), `LoadingManager.pde` (optional loading screen), `Main.pde` (main setup/draw), and `GameInit.pde` (your game configuration).
+1. Import all files into Processing (download their IDE on [their website](https://processing.org)), either by cloning this repository or downloading the individual files (in ```/Source```): `BaseClasses.pde` (base classes), `GameHuman.pde` (Human extensions), `ObjectClasses.pde` (sample object classes), `GameManager.pde` (core systems), `KeyHandlers.pde` (input), `LoadingManager.pde` (optional loading screen), `Main.pde` (main setup/draw), and `GameInit.pde` (your game configuration).
 2. You can edit, rename, or remove the example GameInit.pde and ObjectClasses.pde files. (You are recommended to use them as templates.)
 3. In your **`GameInit.pde`,** implement the following functions:
 
