@@ -25,6 +25,11 @@ class KeyManager {
 void keyPressed() {
     gameManager.keyManager.setKeyPressed(keyCode, true);
     
+    if (gameManager.useSaveSystem && (key == 's' || key == 'S')) { 
+      gameManager.saveGame(); 
+      gameManager.messageBox.showEvent("Game saved!");
+    }
+    
     // First, let input boxes handle keys
     boolean handledByInputBox = false;
     for (int i = gameManager.activeInputBoxes.size() - 1; i >= 0; i--) {

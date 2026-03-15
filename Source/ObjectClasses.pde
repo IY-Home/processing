@@ -18,11 +18,27 @@ class Ball extends Thing {
         this.groundHeightOffset = radius;
     }
 
-    // Display the ball - REQUIRED by abstract class Thing
+    // Display the ball
     void display() {
-            strokeWeight(2);
-            fill(ballColor);
-            ellipse(this.position.x, this.position.y, size, size);
+        strokeWeight(2);
+        fill(ballColor);
+        ellipse(this.position.x, this.position.y, size, size);
+    }
+    
+    @Override
+    HashMap<String, Object> save() {
+        HashMap<String, Object> data = super.save();
+        data.put("ballColor", this.ballColor);
+        data.put("radius", this.radius);
+        return data;
+    }
+    
+    @Override
+    void load(HashMap<String, Object> data) {
+        super.load(data);
+        if (data.containsKey("ballColor")) this.ballColor = ((Number) data.get("ballColor")).intValue();
+        if (data.containsKey("radius")) this.radius = ((Number) data.get("radius")).floatValue();
+        this.size = this.radius * 2;
     }
 }
 
@@ -54,17 +70,17 @@ class BouncyBall extends Ball implements Interactable {
     }
     void onTouch(Thing other, float distance) {
         if (other instanceof BouncyBall && !(((BouncyBall) other).rebounding) && (((BouncyBall) other).radius) + this.radius >= distance) {
-                if (other.position.x >= this.position.x) {
-                    other.position.x = this.position.x + this.radius + 20;
-                    other.velocity.x = 2;
-                    this.velocity.x = -2;
-                } else if (other.position.x < this.position.x) {
-                    other.position.x = this.position.x - this.radius - 20;
-                    other.velocity.x = -2;
-                    this.velocity.x = 2;
-                }
-                this.rebounding = true;
-                ((BouncyBall) other).rebounding = true;
+            if (other.position.x >= this.position.x) {
+                other.position.x = this.position.x + this.radius + 20;
+                other.velocity.x = 2;
+                this.velocity.x = -2;
+            } else if (other.position.x < this.position.x) {
+                other.position.x = this.position.x - this.radius - 20;
+                other.velocity.x = -2;
+                this.velocity.x = 2;
+            }
+            this.rebounding = true;
+            ((BouncyBall) other).rebounding = true;
         }
     }
     void onGrab(Human human) {} void onRelease(Human human) {} boolean isGrabbable() { return true; }
@@ -77,6 +93,24 @@ class BouncyBall extends Ball implements Interactable {
       this.velocity.set(random(10, 160)*direction, random(-200, -600));
     }
 
+    @Override
+    HashMap<String, Object> save() {
+        HashMap<String, Object> data = super.save();
+        data.put("rebounding", this.rebounding);
+        data.put("imagePath", this.imagePath);
+        return data;
+    }
+    
+    @Override
+    void load(HashMap<String, Object> data) {
+        super.load(data);
+        if (data.containsKey("rebounding")) this.rebounding = (boolean) data.get("rebounding");
+        if (data.containsKey("imagePath")) {
+            this.imagePath = (String) data.get("imagePath");
+            // Re-add to ImageManager on load
+            gameManager.imageManager.addImage(imagePath, imagePath, round(this.radius*2), round(this.radius*2));
+        }
+    }
 }
 
 
@@ -104,7 +138,7 @@ class Shirt extends Thing implements Interactable {
     }
     
     void onGrab(Human human) {
-    
+      gameManager.messageBox.showEvent("Grabbed a shirt! Press SHIFT to put on.");
     }
 
     // Interactable interface implementation
@@ -121,6 +155,19 @@ class Shirt extends Thing implements Interactable {
     }
 
     void onRelease(Human human) {
+    }
+    
+    @Override
+    HashMap<String, Object> save() {
+        HashMap<String, Object> data = super.save();
+        data.put("shirtColor", this.shirtColor);
+        return data;
+    }
+    
+    @Override
+    void load(HashMap<String, Object> data) {
+        super.load(data);
+        if (data.containsKey("shirtColor")) this.shirtColor = ((Number) data.get("shirtColor")).intValue();
     }
 
 }
@@ -247,6 +294,45 @@ class Chair extends Thing implements Interactable {
     }
 
     void onRelease(Human human) {
+    }
+    
+    @Override
+    HashMap<String, Object> save() {
+        HashMap<String, Object> data = super.save();
+        data.put("chairColor", this.chairColor);
+        data.put("humanOnChair", this.humanOnChair);
+        data.put("occupied", this.occupied);
+        
+        // Save reference to rested object if it exists and is Saveable
+        if (this.restedObj != null && this.restedObj instanceof Saveable) {
+            data.put("restedObjID", (this.restedObj).id);
+        }
+        
+        return data;
+    }
+    
+    @Override
+    void load(HashMap<String, Object> data) {
+        super.load(data);
+        if (data.containsKey("chairColor")) this.chairColor = ((Number) data.get("chairColor")).intValue();
+        if (data.containsKey("humanOnChair")) this.humanOnChair = (boolean) data.get("humanOnChair");
+        if (data.containsKey("occupied")) this.occupied = (boolean) data.get("occupied");
+        
+        // Load rested object reference
+        if (data.containsKey("restedObjID")) {
+            this.loadRestedObj(gameManager.objects, ((Number) data.get("restedObjID")).intValue());
+        }
+    }
+    
+    void loadRestedObj(ArrayList<Thing> objects, int objId) {
+        if (objId > 0) {
+            for (Thing obj : objects) {
+                if (obj instanceof Saveable && (obj).id == objId) {
+                    this.restedObj = obj;
+                    break;
+                }
+            }
+        }
     }
 }
 
@@ -375,6 +461,33 @@ class Door extends Thing implements Interactable {
             this.position.x = posXDes;
         }
     }
+    
+    @Override
+    HashMap<String, Object> save() {
+        HashMap<String, Object> data = super.save();
+        data.put("sceneFrom", this.sceneFrom);
+        data.put("sceneDes", this.sceneDes);
+        data.put("posXFrom", this.posXFrom);
+        data.put("posXDes", this.posXDes);
+        data.put("frameColor", this.frameColor);
+        data.put("showDoor", this.showDoor);
+        data.put("isOneWay", this.isOneWay);
+        data.put("sittingOnGround", this.sittingOnGround);
+        return data;
+    }
+    
+    @Override
+    void load(HashMap<String, Object> data) {
+        super.load(data);
+        if (data.containsKey("sceneFrom")) this.sceneFrom = ((Number) data.get("sceneFrom")).intValue();
+        if (data.containsKey("sceneDes")) this.sceneDes = ((Number) data.get("sceneDes")).intValue();
+        if (data.containsKey("posXFrom")) this.posXFrom = ((Number) data.get("posXFrom")).floatValue();
+        if (data.containsKey("posXDes")) this.posXDes = ((Number) data.get("posXDes")).floatValue();
+        if (data.containsKey("frameColor")) this.frameColor = ((Number) data.get("frameColor")).intValue();
+        if (data.containsKey("showDoor")) this.showDoor = (boolean) data.get("showDoor");
+        if (data.containsKey("isOneWay")) this.isOneWay = (boolean) data.get("isOneWay");
+        if (data.containsKey("sittingOnGround")) this.sittingOnGround = (boolean) data.get("sittingOnGround");
+    }
 }
 
 // Cupboard/storage object class
@@ -475,6 +588,55 @@ class Cupboard extends Thing implements Interactable {
                 other.velocity.x = 0;
             } else {
                 shelves.remove(other);
+            }
+        }
+    }
+    
+    @Override
+    HashMap<String, Object> save() {
+        HashMap<String, Object> data = super.save();
+        data.put("opened", this.opened);
+        data.put("woodColor", this.woodColor);
+        data.put("cupboardHeight", this.cupboardHeight);
+        data.put("cupboardWidth", this.cupboardWidth);
+        data.put("sceneDes", this.sceneDes);
+        
+        // Save shelf item IDs
+        ArrayList<Integer> shelfIDs = new ArrayList<Integer>();
+        for (Thing item : shelves) {
+            if (item instanceof Saveable) {
+                shelfIDs.add((item).id);
+            }
+        }
+        data.put("shelfIDs", shelfIDs);
+        
+        return data;
+    }
+    
+    @Override
+    void load(HashMap<String, Object> data) {
+        super.load(data);
+        if (data.containsKey("opened")) this.opened = (boolean) data.get("opened");
+        if (data.containsKey("woodColor")) this.woodColor = ((Number) data.get("woodColor")).intValue();
+        if (data.containsKey("cupboardHeight")) this.cupboardHeight = ((Number) data.get("cupboardHeight")).floatValue();
+        if (data.containsKey("cupboardWidth")) this.cupboardWidth = ((Number) data.get("cupboardWidth")).floatValue();
+        if (data.containsKey("sceneDes")) this.sceneDes = ((Number) data.get("sceneDes")).intValue();
+        
+        // Load shelf references
+        if (data.containsKey("shelfIDs")) {
+            ArrayList<Integer> shelfIDs = (ArrayList<Integer>) data.get("shelfIDs");
+            this.loadShelves(gameManager.objects, shelfIDs);
+        }
+    }
+    
+    void loadShelves(ArrayList<Thing> objects, ArrayList<Integer> shelfIDs) {
+        this.shelves.clear();
+        for (int id : shelfIDs) {
+            for (Thing obj : objects) {
+                if (obj instanceof Saveable && (obj).id == id) {
+                    this.shelves.add(obj);
+                    break;
+                }
             }
         }
     }
@@ -633,7 +795,34 @@ class Drone extends Thing implements Interactable {
         }
     }
 
-
+    @Override
+    HashMap<String, Object> save() {
+        HashMap<String, Object> data = super.save();
+        data.put("altitude", this.altitude);
+        data.put("battery", this.battery);
+        data.put("status", this.status);
+        data.put("verticalSpeed", this.verticalSpeed);
+        data.put("oldBattery", this.oldBattery);
+        data.put("col", this.col);
+        data.put("recharging", this.recharging);
+        data.put("rechargeStartTime", this.rechargeStartTime);
+        data.put("rechargeDuration", this.rechargeDuration);
+        return data;
+    }
+    
+    @Override
+    void load(HashMap<String, Object> data) {
+        super.load(data);
+        if (data.containsKey("altitude")) this.altitude = ((Number) data.get("altitude")).floatValue();
+        if (data.containsKey("battery")) this.battery = ((Number) data.get("battery")).floatValue();
+        if (data.containsKey("status")) this.status = (String) data.get("status");
+        if (data.containsKey("verticalSpeed")) this.verticalSpeed = ((Number) data.get("verticalSpeed")).floatValue();
+        if (data.containsKey("oldBattery")) this.oldBattery = ((Number) data.get("oldBattery")).floatValue();
+        if (data.containsKey("col")) this.col = ((Number) data.get("col")).intValue();
+        if (data.containsKey("recharging")) this.recharging = (boolean) data.get("recharging");
+        if (data.containsKey("rechargeStartTime")) this.rechargeStartTime = ((Number) data.get("rechargeStartTime")).intValue();
+        if (data.containsKey("rechargeDuration")) this.rechargeDuration = ((Number) data.get("rechargeDuration")).intValue();
+    }
 }
 
 // Lunchbox/food object class
@@ -751,7 +940,28 @@ class Lunchbox extends Thing implements Interactable {
         }
       }
     }
-  }
+
+    @Override
+    HashMap<String, Object> save() {
+        HashMap<String, Object> data = super.save();
+        data.put("boxColor", this.boxColor);
+        data.put("price", this.price);
+        data.put("energyValue", this.energyValue);
+        data.put("consumed", this.consumed);
+        data.put("label", this.label);
+        return data;
+    }
+    
+    @Override
+    void load(HashMap<String, Object> data) {
+        super.load(data);
+        if (data.containsKey("boxColor")) this.boxColor = ((Number) data.get("boxColor")).intValue();
+        if (data.containsKey("price")) this.price = ((Number) data.get("price")).floatValue();
+        if (data.containsKey("energyValue")) this.energyValue = ((Number) data.get("energyValue")).floatValue();
+        if (data.containsKey("consumed")) this.consumed = (boolean) data.get("consumed");
+        if (data.containsKey("label")) this.label = (String) data.get("label");
+    }
+}
 
 
 // Cash bag with passcode protection
@@ -979,6 +1189,40 @@ class CashBag extends Thing implements Interactable {
     void update() {
         super.update();
     }
+    
+        @Override
+    HashMap<String, Object> save() {
+        HashMap<String, Object> data = super.save();
+        data.put("bagColor", this.bagColor);
+        data.put("cashAmount", this.cashAmount);
+        data.put("passcode", this.passcode);
+        data.put("unlocked", this.unlocked);
+        data.put("wrongAttempts", this.wrongAttempts);
+        data.put("cooldownOnWrongAttempts", this.cooldownOnWrongAttempts);
+        data.put("lastAttemptTime", this.lastAttemptTime);
+        data.put("cooldownTime", this.cooldownTime);
+        data.put("hint", this.hint);
+        return data;
+    }
+    
+    @Override
+    void load(HashMap<String, Object> data) {
+        super.load(data);
+        if (data.containsKey("bagColor")) this.bagColor = ((Number) data.get("bagColor")).intValue();
+        if (data.containsKey("cashAmount")) this.cashAmount = ((Number) data.get("cashAmount")).floatValue();
+        if (data.containsKey("passcode")) this.passcode = (String) data.get("passcode");
+        if (data.containsKey("unlocked")) this.unlocked = (boolean) data.get("unlocked");
+        if (data.containsKey("wrongAttempts")) this.wrongAttempts = ((Number) data.get("wrongAttempts")).intValue();
+        if (data.containsKey("cooldownOnWrongAttempts")) this.cooldownOnWrongAttempts = ((Number) data.get("cooldownOnWrongAttempts")).intValue();
+        if (data.containsKey("lastAttemptTime")) this.lastAttemptTime = ((Number) data.get("lastAttemptTime")).intValue();
+        if (data.containsKey("cooldownTime")) this.cooldownTime = ((Number) data.get("cooldownTime")).intValue();
+        if (data.containsKey("hint")) this.hint = (String) data.get("hint");
+        
+        // Reset UI state
+        this.feedbackMessage = "";
+        this.feedbackTime = 0;
+        this.lastGrabbedHuman = null;
+    }
 }
 
 class PreFilledCupboard extends Cupboard {
@@ -1098,6 +1342,47 @@ class PreFilledCupboard extends Cupboard {
         text(this.label, position.x, position.y - cupboardHeight + 20);
         textAlign(LEFT);
     }
+    
+    @Override
+    HashMap<String, Object> save() {
+        HashMap<String, Object> data = super.save();
+        data.put("label", this.label);
+        
+        // Save cupboard item IDs
+        ArrayList<Integer> itemIDs = new ArrayList<Integer>();
+        for (Thing item : cupboardItems) {
+            if (item instanceof Saveable) {
+                itemIDs.add((item).id);
+            }
+        }
+        data.put("cupboardItemIDs", itemIDs);
+        
+        return data;
+    }
+    
+    @Override
+    void load(HashMap<String, Object> data) {
+        super.load(data);
+        if (data.containsKey("label")) this.label = (String) data.get("label");
+        
+        // Load cupboard item references
+        if (data.containsKey("cupboardItemIDs")) {
+            ArrayList<Integer> itemIDs = (ArrayList<Integer>) data.get("cupboardItemIDs");
+            this.loadCupboardItems(gameManager.objects, itemIDs);
+        }
+    }
+    
+    void loadCupboardItems(ArrayList<Thing> objects, ArrayList<Integer> itemIDs) {
+        this.cupboardItems.clear();
+        for (int id : itemIDs) {
+            for (Thing obj : objects) {
+                if (obj instanceof Saveable && (obj).id == id) {
+                    this.cupboardItems.add(obj);
+                    break;
+                }
+            }
+        }
+    }
 }
 
 class SpeedBooster extends Thing implements Interactable {
@@ -1176,4 +1461,21 @@ class SpeedBooster extends Thing implements Interactable {
   boolean isGrabbable() { return active; }
   void onInteract(Human human) {}
   void onRelease(Human human) {}
+  
+  @Override
+  HashMap<String, Object> save() {
+      HashMap<String, Object> data = super.save();
+      data.put("boostMultiplier", this.boostMultiplier);
+      data.put("boosterColor", this.boosterColor);
+      data.put("active", this.active);
+      return data;
+  }
+  
+  @Override
+  void load(HashMap<String, Object> data) {
+      super.load(data);
+      if (data.containsKey("boostMultiplier")) this.boostMultiplier = ((Number) data.get("boostMultiplier")).floatValue();
+      if (data.containsKey("boosterColor")) this.boosterColor = ((Number) data.get("boosterColor")).intValue();
+      if (data.containsKey("active")) this.active = (boolean) data.get("active");
+  }
 }

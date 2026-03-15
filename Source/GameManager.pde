@@ -16,8 +16,10 @@ class GameManager {
     Window window;
     KeyManager keyManager;
     ImageManager imageManager;
+    SaveManager saveManager;
     MessageBox messageBox;
     
+    boolean useSaveSystem = true;
     
     GameManager(String programName, String programVersion) {
         this.programName = programName;
@@ -29,6 +31,7 @@ class GameManager {
         imageManager = new ImageManager();
         window = new Window(imageManager, color(255), color(50), 1);
         keyManager = new KeyManager();
+        saveManager = new SaveManager();
         messageBox = new MessageBox(
             width * 0.15,  // 15% from left
             height * 0.10, // 75% from top (near bottom)
@@ -50,10 +53,14 @@ class GameManager {
         window.scenes.clear();
         keyManager.resetAllKeys();
         
-        // Initialize game - pass window directly
+        // Initialize game
         createScenes(window);
         createHumans(mainHumans);
         createObjects(objects);
+        if (useSaveSystem) {
+          setObjectIDs();
+          loadGame();
+        }
         imageManager.startLoading();
         
         println("GameManager initialized!");
@@ -184,6 +191,27 @@ class GameManager {
         if (!mainHumans.contains(human)) {
             mainHumans.add(human);
         }
+    }
+    
+    void saveGame() {
+      saveManager.saveGame();
+    }
+
+    void loadGame() {
+      saveManager.loadGame();
+    }
+    
+    void setObjectIDs() {
+      for (Thing obj : objects) {
+          obj.id = saveManager.getNextID();
+          println(obj.getClass().getSimpleName() + " assigned ID: " + obj.id);
+      }
+      for (Human human : mainHumans) {
+          if (!objects.contains(human)) {
+              human.id = saveManager.getNextID();
+              println("Human " + human.name + " assigned ID: " + human.id);
+          }
+      }
     }
 }
 
@@ -760,6 +788,304 @@ class ImageManager {
     
     boolean isComplete() {
         return !isLoading && loadedAssets == totalAssets;
+    }
+}
+
+class SaveManager {
+    int currentMaxID = 0;
+    String saveFilePath = "saves/";
+    String defaultSaveName = "gameSave";
+    
+    // Ensure saves directory exists
+    SaveManager() {
+        File savesDir = new File(sketchPath(), "saves");
+        if (!savesDir.exists()) {
+            savesDir.mkdir();
+        }
+    }
+    
+    // Assign sequential IDs to objects as they're created
+    int getNextID() {
+        currentMaxID++;
+        return currentMaxID;
+    }
+    
+    void saveGame(String filename) {
+        JSONObject saveData = new JSONObject();
+        
+        // Save metadata
+        saveData.setInt("saveVersion", 1);
+        saveData.setLong("timestamp", System.currentTimeMillis());
+        saveData.setInt("currentMaxID", currentMaxID);
+        saveData.setInt("currentScene", gameManager.window.scene);
+        
+        // Save ALL objects (including humans!)
+        JSONArray objectsArray = new JSONArray();
+        
+        // Add all objects from objects list
+        for (Thing obj : gameManager.objects) {
+            addThingToArray(obj, objectsArray);
+        }
+        
+        // ALSO ADD ALL HUMANS (if not already in objects)
+        for (Human human : gameManager.mainHumans) {
+            if (!gameManager.objects.contains(human)) {
+                addThingToArray(human, objectsArray);
+            }
+        }
+        
+        saveData.setJSONArray("objects", objectsArray);
+        
+        // Save humans list (just IDs for mainHumans tracking)
+        JSONArray humansArray = new JSONArray();
+        for (Human human : gameManager.mainHumans) {
+            humansArray.append(human.id);
+        }
+        saveData.setJSONArray("mainHumans", humansArray);
+        
+        // Save tracked human
+        if (gameManager.trackedHuman != null) {
+            saveData.setInt("trackedHumanID", gameManager.trackedHuman.id);
+        }
+        
+        // Write to file
+        saveJSONObject(saveData, saveFilePath + filename + ".json");
+        println("Game saved to " + saveFilePath + filename + ".json");
+    }
+    
+    void addThingToArray(Thing thing, JSONArray array) {
+        JSONObject objData = new JSONObject();
+        objData.setString("class", thing.getClass().getName());
+        
+        HashMap<String, Object> saveMap = thing.save();
+        JSONObject dataJSON = hashMapToJSON(saveMap);
+        objData.setJSONObject("data", dataJSON);
+        
+        array.append(objData);
+    }
+    
+    void saveGame() {
+      this.saveGame(this.defaultSaveName);
+    }
+    
+    // Convert HashMap to JSONObject recursively
+    JSONObject hashMapToJSON(HashMap<String, Object> map) {
+        JSONObject json = new JSONObject();
+        
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            
+            if (value instanceof Integer) {
+                json.setInt(key, (Integer) value);
+            } else if (value instanceof Float) {
+                json.setFloat(key, (Float) value);
+            } else if (value instanceof Boolean) {
+                json.setBoolean(key, (Boolean) value);
+            } else if (value instanceof String) {
+                json.setString(key, (String) value);
+            } else if (value instanceof HashMap) {
+                // Recursively convert nested HashMaps
+                json.setJSONObject(key, hashMapToJSON((HashMap<String, Object>) value));
+            } else if (value instanceof ArrayList) {
+                JSONArray array = new JSONArray();
+                ArrayList<?> list = (ArrayList<?>) value;
+                for (Object item : list) {
+                    if (item instanceof Integer) {
+                        array.append((Integer) item);
+                    } else if (item instanceof Float) {
+                        array.append((Float) item);
+                    } else if (item instanceof String) {
+                        array.append((String) item);
+                    } else if (item instanceof HashMap) {
+                        array.append(hashMapToJSON((HashMap<String, Object>) item));
+                    }
+                }
+                json.setJSONArray(key, array);
+            }
+        }
+        
+        return json;
+    }
+    
+    void loadGame(String filename) {
+        String fullPath = saveFilePath + filename + ".json";
+        File file = new File(sketchPath(), fullPath);
+        
+        // Check if file exists
+        if (!file.exists()) {
+            println("ERROR: Save file not found: " + fullPath);
+            println("Current directory: " + sketchPath());
+            
+            // Optional: Show message to player
+            if (gameManager.messageBox != null) {
+                gameManager.messageBox.showAlert("Save file not found: " + filename);
+            }
+            return;
+        }
+        
+        // File exists, proceed with loading
+        JSONObject saveData = loadJSONObject(fullPath);
+        if (saveData == null) {
+            println("ERROR: Could not parse save file: " + fullPath);
+            return;
+        }
+ 
+        // Load metadata
+        currentMaxID = saveData.getInt("currentMaxID");
+        int savedScene = saveData.getInt("currentScene");
+        
+        // Create a map of existing objects by ID
+        HashMap<Integer, Thing> existingThings = new HashMap<Integer, Thing>();
+        for (Thing obj : gameManager.objects) {
+            existingThings.put(obj.id, obj);
+            println("Existing object: " + obj.getClass().getSimpleName() + " with ID: " + obj.id);
+        }
+        for (Human human : gameManager.mainHumans) {
+            existingThings.put(human.id, human);
+            println("Existing human: " + human.name + " with ID: " + human.id);
+        }
+        
+        // Load objects data and update existing instances
+        JSONArray objectsArray = saveData.getJSONArray("objects");
+        JSONArray humansArray = new JSONArray();
+                    
+        for (int i = 0; i < objectsArray.size(); i++) {
+            JSONObject objData = objectsArray.getJSONObject(i);
+            JSONObject dataJSON = objData.getJSONObject("data");
+            
+            // Get ID from the data JSON
+            int objId = dataJSON.getInt("id");
+            
+            // Find the existing object with this ID
+            Thing existingThing = existingThings.get(objId);
+            if (existingThing != null) {
+                // Convert JSONObject to HashMap and load
+                HashMap<String, Object> dataMap = jsonToHashMap(dataJSON);
+                existingThing.load(dataMap);
+                println("Updated: " + existingThing.getClass().getSimpleName() + " ID: " + objId);
+            } else {
+                println("WARNING: No existing object found with ID: " + objId);
+                println("Available IDs: " + existingThings.keySet());
+            }
+        }
+        
+        // Load mainHumans list
+        if (saveData.hasKey("mainHumans")) {
+            humansArray = saveData.getJSONArray("mainHumans");
+            gameManager.mainHumans.clear();
+            
+            println("Loading mainHumans...");
+            println("humansArray size: " + humansArray.size());
+            println("existingThings keys: " + existingThings.keySet());
+            
+            // First, find the human data from objectsArray
+            HashMap<Integer, JSONObject> objectDataMap = new HashMap<Integer, JSONObject>();
+            for (int i = 0; i < objectsArray.size(); i++) {
+                JSONObject objData = objectsArray.getJSONObject(i);
+                JSONObject dataJSON = objData.getJSONObject("data");
+                int objId = dataJSON.getInt("id");
+                objectDataMap.put(objId, dataJSON);
+            }
+            
+            for (int i = 0; i < humansArray.size(); i++) {
+                int humanID = humansArray.getInt(i);
+                println("Looking for human ID: " + humanID);
+                
+                Thing human = existingThings.get(humanID);
+                if (human == null) {
+                    println("  Human not found in existingThings!");
+                    continue;
+                }
+                
+                println("  Found human: " + human.getClass().getSimpleName());
+                
+                // Load the human's data!
+                JSONObject humanData = objectDataMap.get(humanID);
+                if (humanData != null) {
+                    println("  Found save data for human ID " + humanID);
+                    HashMap<String, Object> dataMap = jsonToHashMap(humanData);
+                    human.load(dataMap);
+                    
+                    gameManager.mainHumans.add((Human) human);
+                    println("  Added to mainHumans");
+                } else {
+                    println("  No save data found for human ID " + humanID);
+                }
+            }
+        } else {
+          println("No mainHumans were found!");
+        }
+        
+        // Load tracked human
+        if (saveData.hasKey("trackedHumanID")) {
+            int trackedID = saveData.getInt("trackedHumanID");
+            Thing tracked = existingThings.get(trackedID);
+            if (tracked instanceof Human) {
+                gameManager.trackedHuman = (Human) tracked;
+                println("Tracked human set to ID: " + trackedID);
+            }
+        }
+        
+        // Set current scene
+        gameManager.window.scene = savedScene;
+        
+        println("Game loaded from " + saveFilePath + filename + ".json");
+        println("Updated " + objectsArray.size() + " objects");
+        println("Updated " + humansArray.size() + " humans");
+    }
+    
+    void loadGame() {
+      this.loadGame(this.defaultSaveName);
+    }
+    
+    // Convert JSONObject to HashMap recursively
+    HashMap<String, Object> jsonToHashMap(JSONObject json) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        
+        // Get all keys
+        for (Object keyObj : json.keys()) {
+            String key = (String) keyObj;
+            
+            // Determine the type and extract value
+            if (json.isNull(key)) continue;
+            
+            if (json.get(key) instanceof Integer) {
+                map.put(key, json.getInt(key));
+            } else if (json.get(key) instanceof Float) {
+                map.put(key, json.getFloat(key));
+            } else if (json.get(key) instanceof Double) {
+                map.put(key, (float) json.getDouble(key));
+            } else if (json.get(key) instanceof Boolean) {
+                map.put(key, json.getBoolean(key));
+            } else if (json.get(key) instanceof String) {
+                map.put(key, json.getString(key));
+            } else if (json.get(key) instanceof JSONObject) {
+                map.put(key, jsonToHashMap(json.getJSONObject(key)));
+            } else if (json.get(key) instanceof JSONArray) {
+                JSONArray array = json.getJSONArray(key);
+                ArrayList<Object> list = new ArrayList<Object>();
+                
+                for (int i = 0; i < array.size(); i++) {
+                    if (array.isNull(i)) continue;
+                    
+                    if (array.get(i) instanceof Integer) {
+                        list.add(array.getInt(i));
+                    } else if (array.get(i) instanceof Float) {
+                        list.add(array.getFloat(i));
+                    } else if (array.get(i) instanceof Boolean) {
+                        list.add(array.getBoolean(i));
+                    } else if (array.get(i) instanceof String) {
+                        list.add(array.getString(i));
+                    } else if (array.get(i) instanceof JSONObject) {
+                        list.add(jsonToHashMap(array.getJSONObject(i)));
+                    }
+                }
+                map.put(key, list);
+            }
+        }
+        
+        return map;
     }
 }
 

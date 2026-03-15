@@ -265,6 +265,91 @@ class GameHuman extends Human {
             this.rested = true;
         }
     }
+    
+    @Override
+    HashMap<String, Object> save() {
+        HashMap<String, Object> data = super.save();
+        
+        // Basic attributes
+        data.put("firstName", this.firstName);
+        data.put("lastName", this.lastName);
+        data.put("gender", this.gender);
+        data.put("age", this.age);
+        data.put("speed", this.speed);
+        data.put("sleeping", this.sleeping);
+        data.put("jumping", this.jumping);
+        
+        // Hunger and money
+        data.put("hasHungerAndMoney", this.hasHungerAndMoney);
+        data.put("hunger", this.hunger);
+        data.put("money", this.money);
+        data.put("maxHunger", this.maxHunger);
+        data.put("lastHungerUpdate", this.lastHungerUpdate);
+        data.put("velocityHungerUsed", this.velocityHungerUsed);
+        data.put("hungerIncreaseRate", this.hungerIncreaseRate);
+        data.put("hungerIncreaseAmount", this.hungerIncreaseAmount);
+        data.put("isDead", this.isDead);
+        
+        // Animation
+        data.put("bobOffset", this.bobOffset);
+        data.put("bobSpeed", this.bobSpeed);
+        data.put("bobAmount", this.bobAmount);
+        data.put("wasMoving", this.wasMoving);
+        
+        // Reference to chair (if any)
+        if (this.standingOnChair != null) {
+            data.put("standingOnChairID", this.standingOnChair.id);
+        }
+        
+        return data;
+    }
+    
+    @Override
+    void load(HashMap<String, Object> data) {
+        super.load(data);
+        
+        // Basic attributes
+        if (data.containsKey("firstName")) this.firstName = (String) data.get("firstName");
+        if (data.containsKey("lastName")) this.lastName = (String) data.get("lastName");
+        if (data.containsKey("gender")) this.gender = (String) data.get("gender");
+        if (data.containsKey("age")) this.age = ((Number) data.get("age")).intValue();
+        if (data.containsKey("speed")) this.speed = ((Number) data.get("speed")).floatValue();
+        if (data.containsKey("sleeping")) this.sleeping = (boolean) data.get("sleeping");
+        if (data.containsKey("jumping")) this.jumping = (boolean) data.get("jumping");
+        
+        // Hunger and money
+        if (data.containsKey("hasHungerAndMoney")) this.hasHungerAndMoney = (boolean) data.get("hasHungerAndMoney");
+        if (data.containsKey("hunger")) this.hunger = ((Number) data.get("hunger")).floatValue();
+        if (data.containsKey("money")) this.money = ((Number) data.get("money")).floatValue();
+        if (data.containsKey("maxHunger")) this.maxHunger = ((Number) data.get("maxHunger")).floatValue();
+        if (data.containsKey("lastHungerUpdate")) this.lastHungerUpdate = ((Number) data.get("lastHungerUpdate")).intValue();
+        if (data.containsKey("velocityHungerUsed")) this.velocityHungerUsed = ((Number) data.get("velocityHungerUsed")).floatValue();
+        if (data.containsKey("hungerIncreaseRate")) this.hungerIncreaseRate = ((Number) data.get("hungerIncreaseRate")).intValue();
+        if (data.containsKey("hungerIncreaseAmount")) this.hungerIncreaseAmount = ((Number) data.get("hungerIncreaseAmount")).floatValue();
+        if (data.containsKey("isDead")) this.isDead = (boolean) data.get("isDead");
+        
+        // Animation
+        if (data.containsKey("bobOffset")) this.bobOffset = ((Number) data.get("bobOffset")).floatValue();
+        if (data.containsKey("bobSpeed")) this.bobSpeed = ((Number) data.get("bobSpeed")).floatValue();
+        if (data.containsKey("bobAmount")) this.bobAmount = ((Number) data.get("bobAmount")).floatValue();
+        if (data.containsKey("wasMoving")) this.wasMoving = (boolean) data.get("wasMoving");
+        
+        // Load chair reference
+        if (data.containsKey("standingOnChairID")) {
+            this.loadStandingOnChair(gameManager.objects, ((Number) data.get("standingOnChairID")).intValue());
+        }
+    }
+    
+    void loadStandingOnChair(ArrayList<Thing> objects, int chairId) {
+        if (chairId > 0) {
+            for (Thing obj : objects) {
+                if (obj instanceof Chair && obj.id == chairId) {
+                    this.standingOnChair = (Chair) obj;
+                    break;
+                }
+            }
+        }
+    }
 
     // Main update loop for human
     void live() {

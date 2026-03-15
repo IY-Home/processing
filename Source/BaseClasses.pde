@@ -6,13 +6,21 @@ interface Interactable {
     void onInteract(Human human);      // Called when SHIFT is pressed when object held
 }
 
+// Interface for objects that receive key presses
 interface KeyEvents {
     void keyDown(char key, int keyCode);
     void keyUp(char key, int keyCode);
 }
 
+// Interface for saveable objects
+interface Saveable {
+    HashMap<String, Object> save();
+    void load(HashMap<String, Object> data);
+}
+
 // Base class for all game objects
-abstract class Thing {
+abstract class Thing implements Saveable {
+    int id = 0;
     PVector position, velocity, acceleration; // Physics properties
     boolean held, grabbable, rested;
     boolean show = true; // Default is true
@@ -112,6 +120,99 @@ abstract class Thing {
     
     // Executes this if updateInBackground is true and object not in current scene
     void backgroundUpdate() {}
+    
+    HashMap<String, Object> save() {
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        
+        data.put("id", this.id); 
+        
+        // Position
+        data.put("position.x", this.position.x);
+        data.put("position.y", this.position.y);
+        
+        // Velocity
+        if (this.velocity != null) {
+            data.put("velocity.x", this.velocity.x);
+            data.put("velocity.y", this.velocity.y);
+        }
+        
+        // Acceleration
+        if (this.acceleration != null) {
+            data.put("acceleration.x", this.acceleration.x);
+            data.put("acceleration.y", this.acceleration.y);
+        }
+        
+        // Boolean flags
+        data.put("held", this.held);
+        data.put("grabbable", this.grabbable);
+        data.put("rested", this.rested);
+        data.put("show", this.show);
+        data.put("hasPhysics", this.hasPhysics);
+        data.put("checkTouchY", this.checkTouchY);
+        data.put("checkTouchWide", this.checkTouchWide);
+        data.put("drawBehindHumans", this.drawBehindHumans);
+        data.put("drawInBackground", this.drawInBackground);
+        data.put("drawInForeground", this.drawInForeground);
+        data.put("updateInBackground", this.updateInBackground);
+        
+        // Numeric values
+        data.put("elasticity", this.elasticity);
+        data.put("friction", this.friction);
+        data.put("sceneIn", this.sceneIn);
+        data.put("groundHeightOffset", this.groundHeightOffset);
+        data.put("checkTouchRadius", this.checkTouchRadius);
+        
+        return data;
+    }
+    
+    void load(HashMap<String, Object> data) {
+        // Position
+        if (data.containsKey("position.x") && data.containsKey("position.y")) {
+            if (this.position == null) {
+                this.position = new PVector();
+            }
+            this.position.x = ((Number) data.get("position.x")).floatValue();
+            this.position.y = ((Number) data.get("position.y")).floatValue();
+        }
+        
+        // Velocity
+        if (data.containsKey("velocity.x") && data.containsKey("velocity.y")) {
+            if (this.velocity == null) {
+                this.velocity = new PVector();
+            }
+            this.velocity.x = ((Number) data.get("velocity.x")).floatValue();
+            this.velocity.y = ((Number) data.get("velocity.y")).floatValue();
+        }
+        
+        // Acceleration
+        if (data.containsKey("acceleration.x") && data.containsKey("acceleration.y")) {
+            if (this.acceleration == null) {
+                this.acceleration = new PVector();
+            }
+            this.acceleration.x = ((Number) data.get("acceleration.x")).floatValue();
+            this.acceleration.y = ((Number) data.get("acceleration.y")).floatValue();
+        }
+        
+        // Boolean flags
+        if (data.containsKey("held")) this.held = (boolean) data.get("held");
+        if (data.containsKey("grabbable")) this.grabbable = (boolean) data.get("grabbable");
+        if (data.containsKey("rested")) this.rested = (boolean) data.get("rested");
+        if (data.containsKey("show")) this.show = (boolean) data.get("show");
+        if (data.containsKey("hasPhysics")) this.hasPhysics = (boolean) data.get("hasPhysics");
+        if (data.containsKey("checkTouchY")) this.checkTouchY = (boolean) data.get("checkTouchY");
+        if (data.containsKey("checkTouchWide")) this.checkTouchWide = (boolean) data.get("checkTouchWide");
+        if (data.containsKey("drawBehindHumans")) this.drawBehindHumans = (boolean) data.get("drawBehindHumans");
+        if (data.containsKey("drawInBackground")) this.drawInBackground = (boolean) data.get("drawInBackground");
+        if (data.containsKey("drawInForeground")) this.drawInForeground = (boolean) data.get("drawInForeground");
+        if (data.containsKey("updateInBackground")) this.updateInBackground = (boolean) data.get("updateInBackground");
+        
+        // Numeric values
+        if (data.containsKey("elasticity")) this.elasticity = ((Number) data.get("elasticity")).floatValue();
+        if (data.containsKey("friction")) this.friction = ((Number) data.get("friction")).floatValue();
+        if (data.containsKey("sceneIn")) this.sceneIn = ((Number) data.get("sceneIn")).intValue();
+        if (data.containsKey("groundHeightOffset")) this.groundHeightOffset = ((Number) data.get("groundHeightOffset")).floatValue();
+        if (data.containsKey("checkTouchRadius")) this.checkTouchRadius = ((Number) data.get("checkTouchRadius")).floatValue();
+    }
     
     ArrayList<Thing> getClosestObjects(ArrayList<Thing> objects, float radius) {
         ArrayList<Thing> nearby = new ArrayList<Thing>();
@@ -506,6 +607,87 @@ class Human extends Thing {
             grabObj.held = true;
         }
     }
+
+    @Override
+    HashMap<String, Object> save() {
+        HashMap<String, Object> data = super.save();
+        
+        // Basic attributes
+        data.put("name", this.name);
+        data.put("hairColor", this.hairColor);
+        data.put("shirtColor", this.shirtColor);
+        data.put("pantColor", this.pantColor);
+        data.put("shoeColor", this.shoeColor);
+        
+        // State
+        data.put("grabbed", this.grabbed);
+        data.put("grabRange", this.grabRange);
+        data.put("shiftCooldown", this.shiftCooldown);
+        
+        // Control settings
+        data.put("hasControls", this.hasControls);
+        data.put("leftKey", this.leftKey);
+        data.put("rightKey", this.rightKey);
+        data.put("upKey", this.upKey);
+        data.put("downKey", this.downKey);
+        data.put("shiftKey", this.shiftKey);
+        data.put("mouseControls", this.mouseControls);
+        
+        data.put("trackedIndicatorHeight", this.trackedIndicatorHeight);
+        
+        // Save reference to grabbed object by ID (if any)
+        if (this.grabObj != null && this.grabObj instanceof Saveable) {
+            data.put("grabObjID", this.grabObj.id);
+        }
+        
+        return data;
+    }
+
+    @Override
+    void load(HashMap<String, Object> data) {
+        super.load(data);
+        
+        // Basic attributes
+        if (data.containsKey("name")) this.name = (String) data.get("name");
+        if (data.containsKey("hairColor")) this.hairColor = ((Number) data.get("hairColor")).intValue();
+        if (data.containsKey("shirtColor")) this.shirtColor = ((Number) data.get("shirtColor")).intValue();
+        if (data.containsKey("pantColor")) this.pantColor = ((Number) data.get("pantColor")).intValue();
+        if (data.containsKey("shoeColor")) this.shoeColor = ((Number) data.get("shoeColor")).intValue();
+        
+        // State
+        if (data.containsKey("grabbed")) this.grabbed = (boolean) data.get("grabbed");
+        if (data.containsKey("grabRange")) this.grabRange = ((Number) data.get("grabRange")).floatValue();
+        if (data.containsKey("shiftCooldown")) this.shiftCooldown = ((Number) data.get("shiftCooldown")).floatValue();
+        
+        // Control settings
+        if (data.containsKey("hasControls")) this.hasControls = (boolean) data.get("hasControls");
+        if (data.containsKey("leftKey")) this.leftKey = ((Number) data.get("leftKey")).intValue();
+        if (data.containsKey("rightKey")) this.rightKey = ((Number) data.get("rightKey")).intValue();
+        if (data.containsKey("upKey")) this.upKey = ((Number) data.get("upKey")).intValue();
+        if (data.containsKey("downKey")) this.downKey = ((Number) data.get("downKey")).intValue();
+        if (data.containsKey("shiftKey")) this.shiftKey = ((Number) data.get("shiftKey")).intValue();
+        if (data.containsKey("mouseControls")) this.mouseControls = (boolean) data.get("mouseControls");
+        
+        if (data.containsKey("trackedIndicatorHeight")) {
+            this.trackedIndicatorHeight = ((Number) data.get("trackedIndicatorHeight")).floatValue();
+        }
+        
+        if (data.containsKey("grabObjID")) {
+            this.loadGrabObj(gameManager.objects, (int) data.get("grabObjId"));
+        }
+    }
+    
+    void loadGrabObj(ArrayList<Thing> objects, int objId) {
+        if (objId > 0) {
+            for (Thing obj : objects) {
+                if (obj instanceof Saveable && obj.id == objId) {
+                    this.grabObj = obj;
+                    break;
+                }
+            }
+        }
+    }
+
 
     // Main update loop for human
     void live() {

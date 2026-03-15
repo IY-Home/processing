@@ -75,7 +75,8 @@ class LoadingManager {
             "Clearing resources...", 
             "Loading scenes...",
             "Creating characters...",
-            "Placing objects...",
+            "Creating objects...",
+            "Loading objects...",
             "Loading images...",
             "Setting up physics...",
             "Starting game!"
@@ -202,50 +203,54 @@ class LoadingManager {
             case 0: // Already initialized
                 break;
                 
-        case 1: // Clear old state
-            objects.clear();
-            humans.clear();
-            gm.activeInputBoxes.clear();
-            window.scenes.clear();
-            gm.keyManager.resetAllKeys();
-            println("  ✓ Resources cleared ");
-            break;
-            
-        case 2: // Load scenes
-            createScenes(window);
-            println("  ✓ Scenes loaded ");
-            break;
-            
-        case 3: // Create humans
-            createHumans(humans);
-            println("  ✓ Characters created ");
-            break;
-            
-        case 4: // Create objects
-            createObjects(objects);
-            println("  ✓ Objects placed ");
-            break;
-                
-            case 5: // START loading images in background
-                if (im.totalAssets > 0) {
-                    im.startLoading();
-                    waitingForImages = true;  // Enter special waiting mode
-                    println("  → Image loading started (" + im.totalAssets + " images)");
-                } else {
-                    // No images to load, skip waiting
-                    println("  ✓ No images to load");
-                    waitingForImages = false;
-                    loadingStage++; // Move to next stage immediately
-                }
-                break;
-                
-            case 6: // Final setup (only reached after images done)
-                println("  ✓ Game configured");
-                break;
-                
-            case 7: // Almost done
-                println("  ✓ Finalizing");
-                break;
+          case 1: // Clear old state
+              objects.clear();
+              humans.clear();
+              gm.activeInputBoxes.clear();
+              window.scenes.clear();
+              gm.keyManager.resetAllKeys();
+              println("  ✓ Resources cleared ");
+              break;
+              
+          case 2: // Load scenes
+              createScenes(window);
+              println("  ✓ Scenes loaded ");
+              break;
+              
+          case 3: // Create humans
+              createHumans(humans);
+              println("  ✓ Characters created ");
+              break;
+              
+          case 4: // Create objects
+              createObjects(objects);
+              println("  ✓ Objects created ");
+              break;
+              
+          case 5: // Load objects
+              if (gm.useSaveSystem) {
+                  gm.setObjectIDs();
+                  gm.loadGame();
+                  println("  ✓ Objects placed ");
+              }
+              break;
+                         
+          case 6: // START loading images in background
+              if (im.totalAssets > 0) {
+                  im.startLoading();
+                  waitingForImages = true;  // Enter special waiting mode
+                  println("  → Image loading started (" + im.totalAssets + " images)");
+              } else {
+                  // No images to load, skip waiting
+                  println("  ✓ No images to load");
+                  waitingForImages = false;
+                  loadingStage++; // Move to next stage immediately
+              }
+              break;
+              
+          case 7: // Almost done
+              println("  ✓ Finalizing");
+              break;
         }
     }
     
