@@ -25,7 +25,7 @@ To export your finished game for macOS with an app that works for both Intel 64-
 - Then, without pressing Enter, drag the ```/macOS_app_builder``` folder into the window. Press Enter.
 - Paste this command: ```chmod +x ./build_universal_app.sh``` and press Enter.
 - Paste this command: ```./build_universal_app.sh``` and press Enter to start the builder.
-- _**Optional:** If you want to change the name, bundle_id, copyright holder, etc. of the app, run the command with parameters like this:
+- _**Optional:** If you want to change the name, bundle_id, copyright holder, etc. of the app, run the command with parameters like this:_
 ```bash
 APP_NAME="MyGame" \
 BUNDLE_ID="com.example.mygame" \
@@ -39,4 +39,5 @@ APP_CATEGORY="public.app-category.games" \
 SAVE_FILE_EXTENSIONS="json,save" \
 ./build_universal_app.sh
 ```
-- Your app should be present in the ```/macOS_app_builder``` folder now, along with a .dmg file to easily move it to the ```/Applications``` folder.
+- Your app should be present in the ```/macOS_app_builder``` folder now, along with a .dmg file to easily move it to the ```Applications``` folder.
+- You can now delete the folders ```macos-x86_64``` and ```macos-aarch64``` in your ```Source``` folder.
