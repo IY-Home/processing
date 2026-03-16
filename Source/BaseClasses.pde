@@ -673,7 +673,7 @@ class Human extends Thing {
         }
         
         if (data.containsKey("grabObjID")) {
-            this.loadGrabObj(gameManager.objects, (int) data.get("grabObjId"));
+            this.loadGrabObj(gameManager.objects, (int) data.get("grabObjID"));
         }
     }
     
