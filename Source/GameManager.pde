@@ -825,22 +825,7 @@ class SaveManager {
     }
 
     String getSavePath() {
-        if (isBundledApp()) {
-            // Save in Application Support folder (macOS standard)
-            String home = System.getProperty("user.home");
-            String appName = gameManager.programName.replace(" ", "");
-            return home + "/Library/Application Support/" + appName + "/" + getLastFolderName(savePath) + "/";
-        } else {
-            // Save next to sketch in development
-            return sketchPath() + "/" + getLastFolderName(savePath) + "/";
-        }
-    }
-
-    boolean isBundledApp() {
-        String path = System.getProperty("user.dir");
-        // When running as .app, path ends with .app/Contents/MacOS
-        // When running in IDE, path is the sketch folder
-        return path.contains(".app/Contents/");
+        return sketchPath() + "/" + getLastFolderName(savePath);
     }
 
     // Assign sequential IDs to objects as they're created
